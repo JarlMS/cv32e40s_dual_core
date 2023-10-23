@@ -668,10 +668,10 @@ module cv32e40s_id_stage import cv32e40s_pkg::*;
 
       // Detect last operation of current instruction.
       // Only when pc_hardening is enabled, otherwise no instruction will be split for pc_hardening.
-      assign last_sec_op = (jmp_bch_insn && xsecure_ctrl_i.cpuctrl.pc_hardening) ? (multi_op_cnt == JMP_BCH_CYCLES - 1)
+      assign last_sec_op = (jmp_bch_insn && xsecure_ctrl_i.cpuctrl.pc_hardening && ENABLE_PC_HARDENING) ? (multi_op_cnt == JMP_BCH_CYCLES - 1)
                                                                                  : 1'b1;
 
-      assign first_sec_op = (jmp_bch_insn && xsecure_ctrl_i.cpuctrl.pc_hardening) ? (multi_op_cnt == '0) : 1'b1;
+      assign first_sec_op = (jmp_bch_insn && xsecure_ctrl_i.cpuctrl.pc_hardening && ENABLE_PC_HARDENING) ? (multi_op_cnt == '0) : 1'b1;
 
       // Count number of operations performed by an instruction.
       always_ff @(posedge clk, negedge rst_n) begin

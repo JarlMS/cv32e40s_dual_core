@@ -351,45 +351,51 @@ module cv32e40s_if_stage import cv32e40s_pkg::*;
   ///////////////
   // PC checker
   ///////////////
-  cv32e40s_pc_check
-  pc_check_i
-  (
-    .clk                  ( clk                  ),
-    .rst_n                ( rst_n                ),
+  // Only generate if ENABLE_PC_HARDENING is set
+  if (ENABLE_PC_HARDENING) begin : PC_CHECK_ENABLED 
+    cv32e40s_pc_check
+    pc_check_i
+    (
+      .clk                  ( clk                  ),
+      .rst_n                ( rst_n                ),
 
-    .xsecure_ctrl_i       ( xsecure_ctrl_i       ),
-    .if_valid_i           ( if_valid_o           ),
-    .id_ready_i           ( id_ready_i           ),
+      .xsecure_ctrl_i       ( xsecure_ctrl_i       ),
+      .if_valid_i           ( if_valid_o           ),
+      .id_ready_i           ( id_ready_i           ),
 
-    .id_valid_i           ( id_valid_i           ),
-    .ex_ready_i           ( ex_ready_i           ),
+      .id_valid_i           ( id_valid_i           ),
+      .ex_ready_i           ( ex_ready_i           ),
 
-    .ex_valid_i           ( ex_valid_i           ),
-    .wb_ready_i           ( wb_ready_i           ),
+      .ex_valid_i           ( ex_valid_i           ),
+      .wb_ready_i           ( wb_ready_i           ),
 
-    .pc_if_i              ( pc_if_o              ),
-    .ctrl_fsm_i           ( ctrl_fsm_i           ),
-    .if_id_pipe_i         ( if_id_pipe_o         ),
-    .id_ex_pipe_i         ( id_ex_pipe_i         ),
-    .jump_target_id_i     ( jump_target_id_i     ),
-    .branch_target_ex_i   ( branch_target_ex_i   ),
-    .branch_decision_ex_i ( branch_decision_ex_i ),
+      .pc_if_i              ( pc_if_o              ),
+      .ctrl_fsm_i           ( ctrl_fsm_i           ),
+      .if_id_pipe_i         ( if_id_pipe_o         ),
+      .id_ex_pipe_i         ( id_ex_pipe_i         ),
+      .jump_target_id_i     ( jump_target_id_i     ),
+      .branch_target_ex_i   ( branch_target_ex_i   ),
+      .branch_decision_ex_i ( branch_decision_ex_i ),
 
-    .last_sec_op_id_i     ( last_sec_op_id_i     ),
-    .last_op_ex_i         ( id_ex_pipe_i.last_op ),
+      .last_sec_op_id_i     ( last_sec_op_id_i     ),
+      .last_op_ex_i         ( id_ex_pipe_i.last_op ),
 
-    .prefetch_is_ptr_i    ( ptr_in_if_o          ),
+      .prefetch_is_ptr_i    ( ptr_in_if_o          ),
 
-    .mepc_i               ( mepc_i               ),
-    .mtvec_addr_i         ( mtvec_addr_i         ),
-    .dpc_i                ( dpc_i                ),
+      .mepc_i               ( mepc_i               ),
+      .mtvec_addr_i         ( mtvec_addr_i         ),
+      .dpc_i                ( dpc_i                ),
 
-    .boot_addr_i          ( boot_addr_i          ),
-    .dm_halt_addr_i       ( dm_halt_addr_i       ),
-    .dm_exception_addr_i  ( dm_exception_addr_i  ),
+      .boot_addr_i          ( boot_addr_i          ),
+      .dm_halt_addr_i       ( dm_halt_addr_i       ),
+      .dm_exception_addr_i  ( dm_exception_addr_i  ),
 
-    .pc_err_o             ( pc_err_o             )
-  );
+      .pc_err_o             ( pc_err_o             )
+    );
+  end 
+  else begin : PC_CHECK_DISABLED
+    assign pc_err_o = 1'b0;
+  end 
 
   // Local instr_valid when we have valid output from prefetcher or we are inserting a dummy instruction
   // and IF is not halted or killed
