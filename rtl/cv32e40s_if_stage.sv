@@ -352,6 +352,7 @@ module cv32e40s_if_stage import cv32e40s_pkg::*;
   // PC checker
   ///////////////
   // Only generate if ENABLE_PC_HARDENING is set
+  generate
   if (ENABLE_PC_HARDENING) begin : PC_CHECK_ENABLED 
     cv32e40s_pc_check
     pc_check_i
@@ -396,6 +397,7 @@ module cv32e40s_if_stage import cv32e40s_pkg::*;
   else begin : PC_CHECK_DISABLED
     assign pc_err_o = 1'b0;
   end 
+  endgenerate
 
   // Local instr_valid when we have valid output from prefetcher or we are inserting a dummy instruction
   // and IF is not halted or killed
