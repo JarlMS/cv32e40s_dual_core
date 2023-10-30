@@ -353,7 +353,7 @@ module cv32e40s_if_stage import cv32e40s_pkg::*;
   ///////////////
   // Only generate if ENABLE_PC_HARDENING is set
   generate
-  if (ENABLE_PC_HARDENING) begin : PC_CHECK_ENABLED 
+  if (ENABLE_PC_HARDENING) begin : gen_pc_check 
     cv32e40s_pc_check
     pc_check_i
     (
@@ -394,7 +394,7 @@ module cv32e40s_if_stage import cv32e40s_pkg::*;
       .pc_err_o             ( pc_err_o             )
     );
   end 
-  else begin : PC_CHECK_DISABLED
+  else begin : no_gen_pc_check
     assign pc_err_o = 1'b0;
   end 
   endgenerate
