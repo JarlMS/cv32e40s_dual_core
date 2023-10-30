@@ -317,7 +317,7 @@ module cv32e40s_controller_fsm import cv32e40s_pkg::*;
 
   // Signalling jump or mret in ID stage to the pc_check module.
   // Mret during debug mode will be flagged as illegal and sys_mret_id will be 0.
-  assign ctrl_fsm_o.jump_in_id_raw = jmp_id || sys_mret_id;
+  assign ctrl_fsm_o.jump_in_id_raw = (jmp_id || sys_mret_id) && ENABLE_PC_HARDENING;
 
   // Detect clic pointers in ID
   assign clic_ptr_in_id = if_id_pipe_i.instr_valid && if_id_pipe_i.instr_meta.clic_ptr;
