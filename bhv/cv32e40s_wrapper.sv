@@ -201,12 +201,15 @@ module cv32e40s_wrapper
       .m_c_obi_instr_if (core_i.m_c_obi_instr_if), // SVA monitor modport cannot connect to a master modport
       .*
     );
-
-  bind cv32e40s_pc_check:
-    core_i.if_stage_i.pc_check_i cv32e40s_pc_check_sva pc_check_sva
-    (
+  generate 
+    if (ENABLE_PC_HARDENING) begin
+      bind cv32e40s_pc_check:
+       core_i.if_stage_i.pc_check_i cv32e40s_pc_check_sva pc_check_sva
+      (
       .*
-    );
+      );
+    end
+  endgenerate
 
   bind cv32e40s_register_file:
     core_i.register_file_wrapper_i.register_file_i cv32e40s_register_file_sva
