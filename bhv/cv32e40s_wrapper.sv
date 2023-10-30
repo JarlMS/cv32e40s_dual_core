@@ -204,7 +204,7 @@ module cv32e40s_wrapper
   generate 
     if (ENABLE_PC_HARDENING) begin
       bind cv32e40s_pc_check:
-       core_i.if_stage_i.pc_check_i cv32e40s_pc_check_sva pc_check_sva
+       core_i.if_stage_i.gen_pc_check.pc_check_i cv32e40s_pc_check_sva pc_check_sva
       (
       .*
       );
