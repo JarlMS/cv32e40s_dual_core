@@ -1,0 +1,215 @@
+diff --git a/bhv/cv32e40s_wrapper.sv b/bhv/cv32e40s_wrapper.sv
+index 84934ed..e936669 100644
+--- a/bhv/cv32e40s_wrapper.sv
++++ b/bhv/cv32e40s_wrapper.sv
+@@ -201,15 +201,12 @@ module cv32e40s_wrapper
+       .m_c_obi_instr_if (core_i.m_c_obi_instr_if), // SVA monitor modport cannot connect to a master modport
+       .*
+     );
+-  generate 
+-    if (ENABLE_PC_HARDENING) begin
+-      bind cv32e40s_pc_check:
+-       core_i.if_stage_i.gen_pc_check.pc_check_i cv32e40s_pc_check_sva pc_check_sva
+-      (
++
++  bind cv32e40s_pc_check:
++    core_i.if_stage_i.pc_check_i cv32e40s_pc_check_sva pc_check_sva
++    (
+       .*
+-      );
+-    end
+-  endgenerate
++    );
+ 
+   bind cv32e40s_register_file:
+     core_i.register_file_wrapper_i.register_file_i cv32e40s_register_file_sva
+diff --git a/docs/user_manual/source/pma.rst b/docs/user_manual/source/pma.rst
+index 4c7d455..5fc5801 100644
+--- a/docs/user_manual/source/pma.rst
++++ b/docs/user_manual/source/pma.rst
+@@ -95,3 +95,34 @@ For such accesses the PMA configuration and default attribution rules are ignore
+  * The access is treated as a non-bufferable access.
+  * The access is treated as a non-cacheable access.
+  * The access is treated as an access to a region without support for atomic operations.
++
++Instructions with multiple memory operations
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++Some instructions may perform multiple memory operations. These can be misaligned load and store instructions that require two memory operations to complete, or
++any of the instructions ``cm.push``, ``cm.pop``, ``cm.popret`` or ``cm.popretz`` from the Zc extension. Common for all these is that the different memory operations
++within the same instruction may get attributed from different regions of the PMA, depending on the address used. In case any of the memory operations get blocked by the PMA, an exception will be raised as soon as it is detected.
++This means that for some instructions the core may get partial state updates or perform some stores of an instruction without fully completing the instruction due to an exception.
++If any of the mentioned instructions gets a PMA error on the first memory operation, no state update will occur before taking the exception.
++:numref:`Impacts of PMA error on multi memory operation instructions` shows how the different instructions behave upon PMA errors on different memory operations.
++
++.. table:: Impacts of PMA error on multi memory operation instructions
++  :name: Impacts of PMA error on multi memory operation instructions
++  :widths: 10 10 80
++  :class: no-scrollbar-table
++
++  +-----------------------+--------------------+-------------------------------------------------------------+
++  |   Instruction Type    |  Memory operation  |                         Description                         |
++  +=======================+====================+=============================================================+
++  | Misaligned load       | 1                  | Exception taken, no state updates.                          |
++  +-----------------------+--------------------+-------------------------------------------------------------+
++  | Misaligned load       | 2                  | Exception taken, no state updates.                          |
++  +-----------------------+--------------------+-------------------------------------------------------------+
++  | Misaligned store      | 1                  | Exception taken, no state updates.                          |
++  +-----------------------+--------------------+-------------------------------------------------------------+
++  | Misaligned store      | 2                  | Exception taken, first store visible outside of |corev|.    |
++  +-----------------------+--------------------+-------------------------------------------------------------+
++  | Zc*                   | 1                  | Exception taken, no state updates.                          |
++  +-----------------------+--------------------+-------------------------------------------------------------+
++  | Zc*                   | 2 -                | Exception taken, partial state update and/or visible stores.|
++  +-----------------------+--------------------+-------------------------------------------------------------+
+\ No newline at end of file
+diff --git a/rtl/cv32e40s_controller_fsm.sv b/rtl/cv32e40s_controller_fsm.sv
+index e442b01..6ff6875 100644
+--- a/rtl/cv32e40s_controller_fsm.sv
++++ b/rtl/cv32e40s_controller_fsm.sv
+@@ -317,7 +317,7 @@ module cv32e40s_controller_fsm import cv32e40s_pkg::*;
+ 
+   // Signalling jump or mret in ID stage to the pc_check module.
+   // Mret during debug mode will be flagged as illegal and sys_mret_id will be 0.
+-  assign ctrl_fsm_o.jump_in_id_raw = (jmp_id || sys_mret_id) && ENABLE_PC_HARDENING;
++  assign ctrl_fsm_o.jump_in_id_raw = jmp_id || sys_mret_id;
+ 
+   // Detect clic pointers in ID
+   assign clic_ptr_in_id = if_id_pipe_i.instr_valid && if_id_pipe_i.instr_meta.clic_ptr;
+diff --git a/rtl/cv32e40s_id_stage.sv b/rtl/cv32e40s_id_stage.sv
+index 234b83e..1422dc0 100644
+--- a/rtl/cv32e40s_id_stage.sv
++++ b/rtl/cv32e40s_id_stage.sv
+@@ -668,10 +668,10 @@ module cv32e40s_id_stage import cv32e40s_pkg::*;
+ 
+       // Detect last operation of current instruction.
+       // Only when pc_hardening is enabled, otherwise no instruction will be split for pc_hardening.
+-      assign last_sec_op = (jmp_bch_insn && xsecure_ctrl_i.cpuctrl.pc_hardening && ENABLE_PC_HARDENING) ? (multi_op_cnt == JMP_BCH_CYCLES - 1)
++      assign last_sec_op = (jmp_bch_insn && xsecure_ctrl_i.cpuctrl.pc_hardening) ? (multi_op_cnt == JMP_BCH_CYCLES - 1)
+                                                                                  : 1'b1;
+ 
+-      assign first_sec_op = (jmp_bch_insn && xsecure_ctrl_i.cpuctrl.pc_hardening && ENABLE_PC_HARDENING) ? (multi_op_cnt == '0) : 1'b1;
++      assign first_sec_op = (jmp_bch_insn && xsecure_ctrl_i.cpuctrl.pc_hardening) ? (multi_op_cnt == '0) : 1'b1;
+ 
+       // Count number of operations performed by an instruction.
+       always_ff @(posedge clk, negedge rst_n) begin
+diff --git a/rtl/cv32e40s_if_stage.sv b/rtl/cv32e40s_if_stage.sv
+index aafd4b9..3e4c360 100644
+--- a/rtl/cv32e40s_if_stage.sv
++++ b/rtl/cv32e40s_if_stage.sv
+@@ -351,53 +351,45 @@ module cv32e40s_if_stage import cv32e40s_pkg::*;
+   ///////////////
+   // PC checker
+   ///////////////
+-  // Only generate if ENABLE_PC_HARDENING is set
+-  generate
+-  if (ENABLE_PC_HARDENING) begin : gen_pc_check 
+-    cv32e40s_pc_check
+-    pc_check_i
+-    (
+-      .clk                  ( clk                  ),
+-      .rst_n                ( rst_n                ),
+-
+-      .xsecure_ctrl_i       ( xsecure_ctrl_i       ),
+-      .if_valid_i           ( if_valid_o           ),
+-      .id_ready_i           ( id_ready_i           ),
+-
+-      .id_valid_i           ( id_valid_i           ),
+-      .ex_ready_i           ( ex_ready_i           ),
+-
+-      .ex_valid_i           ( ex_valid_i           ),
+-      .wb_ready_i           ( wb_ready_i           ),
+-
+-      .pc_if_i              ( pc_if_o              ),
+-      .ctrl_fsm_i           ( ctrl_fsm_i           ),
+-      .if_id_pipe_i         ( if_id_pipe_o         ),
+-      .id_ex_pipe_i         ( id_ex_pipe_i         ),
+-      .jump_target_id_i     ( jump_target_id_i     ),
+-      .branch_target_ex_i   ( branch_target_ex_i   ),
+-      .branch_decision_ex_i ( branch_decision_ex_i ),
+-
+-      .last_sec_op_id_i     ( last_sec_op_id_i     ),
+-      .last_op_ex_i         ( id_ex_pipe_i.last_op ),
+-
+-      .prefetch_is_ptr_i    ( ptr_in_if_o          ),
+-
+-      .mepc_i               ( mepc_i               ),
+-      .mtvec_addr_i         ( mtvec_addr_i         ),
+-      .dpc_i                ( dpc_i                ),
+-
+-      .boot_addr_i          ( boot_addr_i          ),
+-      .dm_halt_addr_i       ( dm_halt_addr_i       ),
+-      .dm_exception_addr_i  ( dm_exception_addr_i  ),
+-
+-      .pc_err_o             ( pc_err_o             )
+-    );
+-  end 
+-  else begin : no_gen_pc_check
+-    assign pc_err_o = 1'b0;
+-  end 
+-  endgenerate
++  cv32e40s_pc_check
++  pc_check_i
++  (
++    .clk                  ( clk                  ),
++    .rst_n                ( rst_n                ),
++
++    .xsecure_ctrl_i       ( xsecure_ctrl_i       ),
++    .if_valid_i           ( if_valid_o           ),
++    .id_ready_i           ( id_ready_i           ),
++
++    .id_valid_i           ( id_valid_i           ),
++    .ex_ready_i           ( ex_ready_i           ),
++
++    .ex_valid_i           ( ex_valid_i           ),
++    .wb_ready_i           ( wb_ready_i           ),
++
++    .pc_if_i              ( pc_if_o              ),
++    .ctrl_fsm_i           ( ctrl_fsm_i           ),
++    .if_id_pipe_i         ( if_id_pipe_o         ),
++    .id_ex_pipe_i         ( id_ex_pipe_i         ),
++    .jump_target_id_i     ( jump_target_id_i     ),
++    .branch_target_ex_i   ( branch_target_ex_i   ),
++    .branch_decision_ex_i ( branch_decision_ex_i ),
++
++    .last_sec_op_id_i     ( last_sec_op_id_i     ),
++    .last_op_ex_i         ( id_ex_pipe_i.last_op ),
++
++    .prefetch_is_ptr_i    ( ptr_in_if_o          ),
++
++    .mepc_i               ( mepc_i               ),
++    .mtvec_addr_i         ( mtvec_addr_i         ),
++    .dpc_i                ( dpc_i                ),
++
++    .boot_addr_i          ( boot_addr_i          ),
++    .dm_halt_addr_i       ( dm_halt_addr_i       ),
++    .dm_exception_addr_i  ( dm_exception_addr_i  ),
++
++    .pc_err_o             ( pc_err_o             )
++  );
+ 
+   // Local instr_valid when we have valid output from prefetcher or we are inserting a dummy instruction
+   // and IF is not halted or killed
+diff --git a/rtl/include/cv32e40s_pkg.sv b/rtl/include/cv32e40s_pkg.sv
+index 74d4191..0cabafc 100644
+--- a/rtl/include/cv32e40s_pkg.sv
++++ b/rtl/include/cv32e40s_pkg.sv
+@@ -472,7 +472,7 @@ parameter CSR_DPC_MASK          = 32'hFFFFFFFE;
+ parameter CSR_MSTATUS_MASK      = 32'b0000_0000_0010_0010_0001_1000_1000_1000;
+ parameter CSR_MINTSTATUS_MASK   = 32'hFF000000;
+ parameter CSR_MSCRATCH_MASK     = 32'hFFFFFFFF;
+-parameter CSR_CPUCTRL_MASK      = 32'h000F001F; // & 32'hfffffff7; // Turn off pc hardening
++parameter CSR_CPUCTRL_MASK      = 32'h000F001F;
+ parameter CSR_PMPNCFG_MASK      = 8'hFF;
+ parameter CSR_PMPADDR_MASK      = 32'hFFFFFFFF;
+ parameter CSR_MSECCFG_MASK      = 32'h00000007;
+@@ -818,9 +818,6 @@ parameter logic [31:0] TDATA1_RST_VAL = {
+ //                              |___/        //
+ ///////////////////////////////////////////////
+ 
+-// Enable PC-Hardening 
+-parameter ENABLE_PC_HARDENING = 0;
+-
+ // Enable Security Features
+ parameter SECURE = 1;
+ 
