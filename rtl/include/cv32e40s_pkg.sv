@@ -819,10 +819,10 @@ parameter logic [31:0] TDATA1_RST_VAL = {
 ///////////////////////////////////////////////
 
 // Enable PC-Hardening 
-parameter ENABLE_PC_HARDENING = 1;
+parameter ENABLE_PC_HARDENING = 0;
 
 // Enable Security Features
-parameter SECURE = 0;
+parameter SECURE = 1;
 
 // Enable User Mode
 parameter bit USER = SECURE;
