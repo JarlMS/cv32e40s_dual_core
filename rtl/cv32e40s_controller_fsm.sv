@@ -1002,7 +1002,7 @@ assign ctrl_fsm_o.exception_in_wb = exception_in_wb;
           end else if (branch_taken_ex) begin
             ctrl_fsm_o.kill_if = 1'b1;
             // For SECURE, branches will be both in ID and EX when the branch is taken, avoid killing ID.
-            ctrl_fsm_o.kill_id = (SECURE && xsecure_ctrl_i.cpuctrl.pc_hardening) ? 1'b0 : 1'b1;
+            ctrl_fsm_o.kill_id = (SECURE && ENABLE_PC_HARDENING && xsecure_ctrl_i.cpuctrl.pc_hardening) ? 1'b0 : 1'b1;
 
             ctrl_fsm_o.pc_mux  = PC_BRANCH;
             ctrl_fsm_o.pc_set  = 1'b1;
