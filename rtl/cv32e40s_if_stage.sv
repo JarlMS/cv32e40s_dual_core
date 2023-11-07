@@ -395,7 +395,7 @@ module cv32e40s_if_stage import cv32e40s_pkg::*;
     );
   end 
   else begin : no_gen_pc_check
-    assign pc_err_o = 1'b1;
+    assign pc_err_o = 1'b0;
   end 
   endgenerate
 
