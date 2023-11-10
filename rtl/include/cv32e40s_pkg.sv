@@ -818,6 +818,9 @@ parameter logic [31:0] TDATA1_RST_VAL = {
 //                              |___/        //
 ///////////////////////////////////////////////
 
+// Eable Dual cores 
+parameter ENABLE_DUAL_CORES = 1;
+
 // Enable PC-Hardening 
 parameter ENABLE_PC_HARDENING = 1;
 
