@@ -126,7 +126,7 @@ module cv32e40s_core import cv32e40s_pkg::*;
     // Security Alerts
   output logic                          alert_minor_o,          // secure
   output logic                          alert_major_o,          // secure
-  output logic [2:0]                    alert_compare_error_o   // Comparison fault in pipeline 
+  output logic [2:0]                    alert_compare_error_o,   // Comparison fault in pipeline 
 
   // Debug interface
   input  logic                          debug_req_i,
@@ -915,7 +915,6 @@ cv32e40s_compare #(
     branch_decision_ex_compare,
     last_sec_op_id_compare,
     pc_err_if_compare,
-    m_c_obi_instr_if.master,
     if_id_pipe_compare,
     id_ex_pipe_compare,
     ctrl_fsm_compare,
@@ -956,7 +955,6 @@ cv32e40s_compare #(
     branch_decision_ex,
     last_sec_op_id,
     pc_err_if,
-    m_c_obi_instr_if.master,
     if_id_pipe,
     id_ex_pipe,
     ctrl_fsm,
@@ -996,7 +994,6 @@ cv32e40s_compare #(
     branch_decision_ex_compare,
     last_sec_op_id_compare,
     pc_err_if_compare,
-    m_c_obi_instr_if.master,
     if_id_pipe_compare,
     id_ex_pipe_compare,
     ctrl_fsm_compare,
