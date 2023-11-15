@@ -138,7 +138,6 @@ module cv32e40s_core import cv32e40s_pkg::*;
   // CPU control signals
   input  logic                          fetch_enable_i,
   output logic                          core_sleep_o
-  output logic                          core_sleep_o_compare
 );
 
   // No additional hardware performance counters
@@ -380,6 +379,8 @@ module cv32e40s_core import cv32e40s_pkg::*;
   logic        unused_signals;
 
   generate if (ENABLE_DUAL_CORES == 1) begin
+    logic         fetch_enable_compare;
+
     logic [31:0]  pc_if_compare;                  // Program counter in IF stage
     logic         ptr_in_if_compare;              // IF stage contains a pointer
     privlvl_t     priv_lvl_if_compare;            // IF stage privilege level
@@ -716,7 +717,7 @@ module cv32e40s_core import cv32e40s_pkg::*;
 
     // Fetch enable
     .fetch_enable_i             ( fetch_enable_i       ),
-    .fetch_enable_o             ( fetch_enable         ),
+    .fetch_enable_o             ( fetch_enable_compare         ),
 
     // Core status
     .if_busy_i                  ( if_busy_compare              ),
@@ -726,11 +727,13 @@ module cv32e40s_core import cv32e40s_pkg::*;
     .ctrl_fsm_i                 ( ctrl_fsm_compare             )
   );
 
-  cv32e40s_compare #(.N ($bits({core_sleep_o_compare, if_busy_compare, lsu_busy_compare, ctrl_fsm_compare})))
-  sleep_unit_compare
+  cv32e40s_compare #(
+    .N ($bits({if_busy_compare, lsu_busy_compare, ctrl_fsm_compare}))
+  ) 
+  sleep_unit_compare 
   (
-    .core_master ({core_sleep_o, if_busy, lsu_busy, ctrl_fsm}),
-    .core_checker ({core_sleep_o_compare, if_busy_compare, lsu_busy_compare, ctrl_fsm_compare}),
+    .core_master ({if_busy, lsu_busy, ctrl_fsm}),
+    .core_checker ({if_busy_compare, lsu_busy_compare, ctrl_fsm_compare}),
     .error (alert_major_o)
   );
   end 
