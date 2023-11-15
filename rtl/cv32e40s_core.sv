@@ -820,7 +820,7 @@ module cv32e40s_core import cv32e40s_pkg::*;
     .protocol_err_o      ( protocol_err_if          )
 );
 
-generate if (ENABLE_DUAL_CORES == 1) begin
+generate if (ENABLE_DUAL_CORES == 1 && false) begin
   cv32e40s_if_stage
   #(
     .RV32                ( RV32                     ),
@@ -1099,6 +1099,185 @@ endgenerate
 
     .lfsr_shift_o                 ( lfsr_shift_id             )
 );
+
+generate if (ENABLE_DUAL_CORES == 1) begin 
+cv32e40s_id_stage
+  #(
+    .RV32                         ( RV32                      ),
+    .B_EXT                        ( B_EXT                     ),
+    .M_EXT                        ( M_EXT                     ),
+    .REGFILE_NUM_READ_PORTS       ( REGFILE_NUM_READ_PORTS    ),
+    .CLIC                         ( CLIC                      )
+  )
+  id_stage_i_comapre
+  (
+    .clk                          ( clk                       ),     // Gated clock
+    .rst_n                        ( rst_ni                    ),
+
+    // Jumps and branches
+    .jmp_target_o                 ( jump_target_id_compare            ),
+
+    // IF/ID pipeline
+    .if_id_pipe_i                 ( if_id_pipe_compare                ),
+
+    // ID/EX pipeline
+    .id_ex_pipe_o                 ( id_ex_pipe_compare                ),
+
+    // EX/WB pipeline
+    .ex_wb_pipe_i                 ( ex_wb_pipe_compare                ),
+
+    // Controller
+    .ctrl_byp_i                   ( ctrl_byp_compare                  ),
+    .ctrl_fsm_i                   ( ctrl_fsm_compare                  ),
+
+    // CSR ID/EX
+    .mstatus_i                    ( mstatus_compare                   ),
+    .xsecure_ctrl_i               ( xsecure_ctrl_compare              ),
+    .mcause_i                     ( mcause_compare                    ),
+    .jvt_addr_i                   ( jvt_addr_compare                  ),
+
+    // Register file write back and forwards
+    .rf_wdata_ex_i                ( rf_wdata_ex_compare               ),
+    .rf_wdata_wb_i                ( rf_wdata_wb_compare               ),
+
+    .alu_en_o                     ( alu_en_id_compare                 ),
+    .alu_jmp_o                    ( alu_jmp_id_compare                ),
+    .alu_jmpr_o                   ( alu_jmpr_id_compare               ),
+    .sys_mret_insn_o              ( sys_mret_insn_id_compare          ),
+    .sys_wfi_insn_o               ( sys_wfi_insn_id_compare           ),
+    .sys_wfe_insn_o               ( sys_wfe_insn_id_compare           ),
+    .last_sec_op_o                ( last_sec_op_id_compare            ),
+
+    .csr_en_raw_o                 ( csr_en_raw_id_compare             ),
+    .sys_en_o                     ( sys_en_id_compare                 ),
+
+    .first_op_o                   ( first_op_id_compare               ),
+    .last_op_o                    ( last_op_id_compare                ),
+    .abort_op_o                   ( abort_op_id_compare               ),
+
+    .rf_re_o                      ( rf_re_id_compare                  ),
+    .rf_raddr_o                   ( rf_raddr_id_compare               ),
+    .rf_rdata_i                   ( rf_rdata_id_compare               ),
+
+    // Pipeline handshakes
+    .id_ready_o                   ( id_ready_compare                  ),
+    .id_valid_o                   ( id_valid_compare                  ),
+    .ex_ready_i                   ( ex_ready_compare                  ),
+
+    .lfsr_shift_o                 ( lfsr_shift_id_compare             )
+);
+
+cv32e40s_compare #(
+  .N ($bits({
+    jump_target_id_compare,
+    if_id_pipe_compare,
+    id_ex_pipe_compare,
+    ex_wb_pipe_compare,
+    ctrl_byp_compare,
+    ctrl_fsm_compare,
+    mstatus_compare,
+    xsecure_ctrl_compare,
+    mcause_compare,
+    jvt_addr_compare,
+    rf_wdata_ex_compare,
+    rf_wdata_wb_compare,
+    alu_en_id_compare,
+    alu_jmp_id_compare,
+    alu_jmpr_id_compare,
+    sys_mret_insn_id_compare,
+    sys_wfi_insn_id_compare,
+    sys_wfe_insn_id_compare,
+    csr_en_raw_id_compare,
+    sys_en_id_compare,
+    first_op_id_compare,
+    last_op_id_compare,
+    abort_op_id_compare,
+    rf_re_id_compare,
+    rf_raddr_id_compare,
+    rf_rdata_id_compare,
+    id_ready_compare,
+    rf_raddr_id_compare,
+    rf_rdata_id_compare,
+    id_ready_compare,
+    id_valid_compare,
+    ex_ready_compare,
+    lfsr_shift_id_compare
+    }))
+) if_stage_compare (
+  .core_master ({
+    jump_target_id,
+    if_id_pipe,
+    id_ex_pipe,
+    ex_wb_pipe,
+    ctrl_byp,
+    ctrl_fsm,
+    mstatus,
+    xsecure_ctrl,
+    mcause,
+    jvt_addr,
+    rf_wdata_ex,
+    rf_wdata_wb,
+    alu_en_id,
+    alu_jmp_id,
+    alu_jmpr_id,
+    sys_mret_insn_id,
+    sys_wfi_insn_id,
+    sys_wfe_insn_id,
+    csr_en_raw_id,
+    sys_en_id,
+    first_op_id,
+    last_op_id,
+    abort_op_id,
+    rf_re_id,
+    rf_raddr_id,
+    rf_rdata_id,
+    id_ready,
+    rf_raddr_id,
+    rf_rdata_id,
+    id_ready,
+    id_valid,
+    ex_ready,
+    lfsr_shift_id
+  }),
+  .core_checker ({
+    jump_target_id_compare,
+    if_id_pipe_compare,
+    id_ex_pipe_compare,
+    ex_wb_pipe_compare,
+    ctrl_byp_compare,
+    ctrl_fsm_compare,
+    mstatus_compare,
+    xsecure_ctrl_compare,
+    mcause_compare,
+    jvt_addr_compare,
+    rf_wdata_ex_compare,
+    rf_wdata_wb_compare,
+    alu_en_id_compare,
+    alu_jmp_id_compare,
+    alu_jmpr_id_compare,
+    sys_mret_insn_id_compare,
+    sys_wfi_insn_id_compare,
+    sys_wfe_insn_id_compare,
+    csr_en_raw_id_compare,
+    sys_en_id_compare,
+    first_op_id_compare,
+    last_op_id_compare,
+    abort_op_id_compare,
+    rf_re_id_compare,
+    rf_raddr_id_compare,
+    rf_rdata_id_compare,
+    id_ready_compare,
+    rf_raddr_id_compare,
+    rf_rdata_id_compare,
+    id_ready_compare,
+    id_valid_compare,
+    ex_ready_compare,
+    lfsr_shift_id_compare
+  }),
+  .error (alert_compare_error_o[1])
+);
+end
+endgenerate
 
   /////////////////////////////////////////////////////
   //   _______  __  ____ _____  _    ____ _____      //
