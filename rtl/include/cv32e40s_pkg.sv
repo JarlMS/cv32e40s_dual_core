@@ -521,7 +521,7 @@ typedef struct packed {
 parameter cpuctrl_t CPUCTRL_RESET_VAL = '{
   integrity     : 1'b1,
   pc_hardening  : 1'b1,
-  dataindtiming : 1'b1,
+  dataindtiming : 1'b0,
   default:    '0};
 
 
