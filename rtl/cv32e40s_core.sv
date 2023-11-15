@@ -126,6 +126,7 @@ module cv32e40s_core import cv32e40s_pkg::*;
     // Security Alerts
   output logic                          alert_minor_o,          // secure
   output logic                          alert_major_o,          // secure
+  output logic [2:0]                    alert_compare_error_o   // Comparison fault in pipeline 
 
   // Debug interface
   input  logic                          debug_req_i,
@@ -699,46 +700,6 @@ module cv32e40s_core import cv32e40s_pkg::*;
     .ctrl_fsm_i                 ( ctrl_fsm             )
   );
 
-  generate if (ENABLE_DUAL_CORES == 1) begin 
-    cv32e40s_sleep_unit
-  #(
-    .LIB                        ( LIB                  )
-  )
-  sleep_unit_i_compare
-  (
-    // Clock, reset interface
-    .clk_ungated_i              ( clk_i                ),       // Ungated clock
-    .rst_n                      ( rst_ni               ),
-    .clk_gated_o                ( clk                  ),       // Gated clock
-    .scan_cg_en_i               ( scan_cg_en_i         ),
-
-    // Core sleep
-    .core_sleep_o               ( core_sleep_o_compare         ),
-
-    // Fetch enable
-    .fetch_enable_i             ( fetch_enable_i       ),
-    .fetch_enable_o             ( fetch_enable_compare         ),
-
-    // Core status
-    .if_busy_i                  ( if_busy_compare              ),
-    .lsu_busy_i                 ( lsu_busy_compare             ),
-
-    // Inputs from controller (including busy)
-    .ctrl_fsm_i                 ( ctrl_fsm_compare             )
-  );
-
-  cv32e40s_compare #(
-    .N ($bits({if_busy_compare, lsu_busy_compare, ctrl_fsm_compare}))
-  ) 
-  sleep_unit_compare 
-  (
-    .core_master ({if_busy, lsu_busy, ctrl_fsm}),
-    .core_checker ({if_busy_compare, lsu_busy_compare, ctrl_fsm_compare}),
-    .error (alert_major_o)
-  );
-  end 
-  endgenerate
-
   /////////////////////////////////////
   //      _    _           _         //
   //     / \  | | ___ _ __| |_ ___   //
@@ -858,6 +819,215 @@ module cv32e40s_core import cv32e40s_pkg::*;
     .integrity_err_o     ( integrity_err_if         ),
     .protocol_err_o      ( protocol_err_if          )
 );
+
+generate if (ENABLE_DUAL_CORES == 1) begin
+  cv32e40s_if_stage
+  #(
+    .RV32                ( RV32                     ),
+    .B_EXT               ( B_EXT                    ),
+    .PMA_NUM_REGIONS     ( PMA_NUM_REGIONS          ),
+    .PMA_CFG             ( PMA_CFG                  ),
+    .PMP_GRANULARITY     ( PMP_GRANULARITY           ),
+    .PMP_NUM_REGIONS     ( PMP_NUM_REGIONS           ),
+    .DUMMY_INSTRUCTIONS  ( SECURE                    ),
+    .MTVT_ADDR_WIDTH     ( MTVT_ADDR_WIDTH          ),
+    .CLIC                ( CLIC                     ),
+    .CLIC_ID_WIDTH       ( CLIC_ID_WIDTH            ),
+    .ZC_EXT              ( ZC_EXT                   ),
+    .M_EXT               ( M_EXT                    ),
+    .DEBUG               ( DEBUG                    ),
+    .DM_REGION_START     ( DM_REGION_START          ),
+    .DM_REGION_END       ( DM_REGION_END            )
+  )
+  if_stage_i
+  (
+    .clk                 ( clk                      ),
+    .rst_n               ( rst_ni                   ),
+
+    .boot_addr_i         ( boot_addr_i              ), // Boot address
+    .branch_target_ex_i  ( branch_target_ex_compare         ), // Branch target address
+    .dm_exception_addr_i ( dm_exception_addr_i      ), // Debug mode exception address
+    .dm_halt_addr_i      ( dm_halt_addr_i           ), // Debug mode halt address
+    .dpc_i               ( dpc_compare                      ), // Debug PC (restore upon return from debug)
+    .jump_target_id_i    ( jump_target_id_compare           ), // Jump target address
+    .mepc_i              ( mepc_compare                     ), // Exception PC (restore upon return from exception/interrupt)
+    .mtvec_addr_i        ( mtvec_addr_compare               ), // Exception/interrupt address (MSBs only)
+    .mtvt_addr_i         ( mtvt_addr_compare                ), // CLIC vector base
+    .jvt_mode_i          ( jvt_mode_compare                 ),
+
+    .branch_decision_ex_i( branch_decision_ex_compare       ),
+
+    .last_sec_op_id_i    ( last_sec_op_id_compare           ),
+    .pc_err_o            ( pc_err_if_compare                ),
+
+    .m_c_obi_instr_if    ( m_c_obi_instr_if.master  ), // Instruction bus interface
+
+    .if_id_pipe_o        ( if_id_pipe_compare               ),
+    .id_ex_pipe_i        ( id_ex_pipe_compare               ),
+
+    .ctrl_fsm_i          ( ctrl_fsm_compare                 ),
+    .trigger_match_i     ( trigger_match_if_compare         ),
+
+    .pc_if_o             ( pc_if_compare                    ),
+    .csr_mtvec_init_o    ( csr_mtvec_init_if_compare        ),
+    .if_busy_o           ( if_busy_compare                  ),
+    .ptr_in_if_o         ( ptr_in_if_compare                ),
+    .priv_lvl_if_o       ( priv_lvl_if_compare              ),
+
+    .last_op_o           ( last_op_if_compare               ),
+    .abort_op_o          ( abort_op_if_compare              ),
+
+    // Pipeline handshakes
+    .if_valid_o          ( if_valid_compare                 ),
+    .id_ready_i          ( id_ready_compare                 ),
+    .id_valid_i          ( id_valid_compare                 ),
+    .ex_ready_i          ( ex_ready_compare                 ),
+    .ex_valid_i          ( ex_valid_compare                 ),
+    .wb_ready_i          ( wb_ready_compare                 ),
+
+    // CSR registers
+    .csr_pmp_i           ( csr_pmp_compare                  ),
+    .mstateen0_i         ( mstateen0_compare                ),
+
+    // Privilege level
+    .priv_lvl_ctrl_i     ( priv_lvl_if_ctrl_compare         ),
+
+    // Dummy Instruction control
+    .xsecure_ctrl_i      ( xsecure_ctrl_compare             ),
+    .lfsr_shift_o        ( lfsr_shift_if_compare            ),
+
+    .integrity_err_o     ( integrity_err_if_compare         ),
+    .protocol_err_o      ( protocol_err_if_compare          )
+);
+
+cv32e40s_compare #(
+  .N ($bits({
+    boot_addr_i,
+    branch_target_ex_compare,
+    dm_exception_addr_i,
+    dm_halt_addr_i,
+    dpc_compare,
+    jump_target_id_compare,
+    mepc_compare,
+    mtvec_addr_compare,
+    mtvt_addr_compare,
+    jvt_mode_compare,
+    branch_decision_ex_compare,
+    last_sec_op_id_compare,
+    pc_err_if_compare,
+    m_c_obi_instr_if.master,
+    if_id_pipe_compare,
+    id_ex_pipe_compare,
+    ctrl_fsm_compare,
+    trigger_match_if_compare,
+    pc_if_compare,
+    csr_mtvec_init_if_compare,
+    if_busy_compare,
+    ptr_in_if_compare,
+    priv_lvl_if_compare,
+    last_op_if_compare,
+    abort_op_if_compare,
+    if_valid_compare,
+    id_ready_compare,
+    id_valid_compare,
+    ex_ready_compare,
+    ex_valid_compare,
+    wb_ready_compare,
+    csr_pmp_compare,
+    mstateen0_compare,
+    priv_lvl_if_ctrl_compare,
+    xsecure_ctrl_compare,
+    lfsr_shift_if_compare,
+    integrity_err_if_compare,
+    protocol_err_if_compare
+    }))
+) sleep_unit_compare (
+  .core_master ({
+    boot_addr_i,
+    branch_target_ex,
+    dm_exception_addr_i,
+    dm_halt_addr_i,
+    dpc,
+    jump_target_id,
+    mepc,
+    mtvec_addr,
+    mtvt_addr,
+    jvt_mode,
+    branch_decision_ex,
+    last_sec_op_id,
+    pc_err_if,
+    m_c_obi_instr_if.master,
+    if_id_pipe,
+    id_ex_pipe,
+    ctrl_fsm,
+    trigger_match_if,
+    pc_if,
+    csr_mtvec_init_if,
+    if_busy,
+    ptr_in_if,
+    priv_lvl_if,
+    last_op_if,
+    abort_op_if,
+    if_valid,
+    id_ready,
+    id_valid,
+    ex_ready,
+    ex_valid,
+    wb_ready,
+    csr_pmp,
+    mstateen0,
+    priv_lvl_if_ctrl,
+    xsecure_ctrl,
+    lfsr_shift_if,
+    integrity_err_if,
+    protocol_err_if
+  }),
+  .core_checker ({
+    boot_addr_i,
+    branch_target_ex_compare,
+    dm_exception_addr_i,
+    dm_halt_addr_i,
+    dpc_compare,
+    jump_target_id_compare,
+    mepc_compare,
+    mtvec_addr_compare,
+    mtvt_addr_compare,
+    jvt_mode_compare,
+    branch_decision_ex_compare,
+    last_sec_op_id_compare,
+    pc_err_if_compare,
+    m_c_obi_instr_if.master,
+    if_id_pipe_compare,
+    id_ex_pipe_compare,
+    ctrl_fsm_compare,
+    trigger_match_if_compare,
+    pc_if_compare,
+    csr_mtvec_init_if_compare,
+    if_busy_compare,
+    ptr_in_if_compare,
+    priv_lvl_if_compare,
+    last_op_if_compare,
+    abort_op_if_compare,
+    if_valid_compare,
+    id_ready_compare,
+    id_valid_compare,
+    ex_ready_compare,
+    ex_valid_compare,
+    wb_ready_compare,
+    csr_pmp_compare,
+    mstateen0_compare,
+    priv_lvl_if_ctrl_compare,
+    xsecure_ctrl_compare,
+    lfsr_shift_if_compare,
+    integrity_err_if_compare,
+    protocol_err_if_compare
+  }),
+  .error (alert_compare_error_o[0])
+);
+
+
+end
+endgenerate
 
   /////////////////////////////////////////////////
   //   ___ ____    ____ _____  _    ____ _____   //
