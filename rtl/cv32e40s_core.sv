@@ -379,7 +379,7 @@ module cv32e40s_core import cv32e40s_pkg::*;
 
   logic        unused_signals;
 
-  generate if (ENABLE_DUAL_CORES == 1) begin
+  //generate if (ENABLE_DUAL_CORES == 1) begin
     logic         fetch_enable_compare;
 
     logic [31:0]  pc_if_compare;                  // Program counter in IF stage
@@ -601,8 +601,8 @@ module cv32e40s_core import cv32e40s_pkg::*;
     logic        lfsr_shift_id_compare;
 
     logic        unused_signals_compare;
-  end
-  endgenerate
+  //end
+  //endgenerate
 
   // Internal OBI interfaces
   cv32e40s_if_c_obi #(.REQ_TYPE(obi_inst_req_t), .RESP_TYPE(obi_inst_resp_t))  m_c_obi_instr_if();
@@ -820,7 +820,7 @@ module cv32e40s_core import cv32e40s_pkg::*;
     .protocol_err_o      ( protocol_err_if          )
 );
 
-generate if (ENABLE_DUAL_CORES == 1 && false) begin
+generate if (ENABLE_DUAL_CORES == 1 && 0) begin
   cv32e40s_if_stage
   #(
     .RV32                ( RV32                     ),
@@ -1193,11 +1193,6 @@ cv32e40s_compare #(
     last_op_id_compare,
     abort_op_id_compare,
     rf_re_id_compare,
-    rf_raddr_id_compare,
-    rf_rdata_id_compare,
-    id_ready_compare,
-    rf_raddr_id_compare,
-    rf_rdata_id_compare,
     id_ready_compare,
     id_valid_compare,
     ex_ready_compare,
@@ -1229,11 +1224,6 @@ cv32e40s_compare #(
     last_op_id,
     abort_op_id,
     rf_re_id,
-    rf_raddr_id,
-    rf_rdata_id,
-    id_ready,
-    rf_raddr_id,
-    rf_rdata_id,
     id_ready,
     id_valid,
     ex_ready,
@@ -1264,11 +1254,6 @@ cv32e40s_compare #(
     last_op_id_compare,
     abort_op_id_compare,
     rf_re_id_compare,
-    rf_raddr_id_compare,
-    rf_rdata_id_compare,
-    id_ready_compare,
-    rf_raddr_id_compare,
-    rf_rdata_id_compare,
     id_ready_compare,
     id_valid_compare,
     ex_ready_compare,
