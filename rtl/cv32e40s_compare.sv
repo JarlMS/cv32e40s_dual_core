@@ -5,6 +5,7 @@
 // Coder: JarlMS
 //--------------------------------
 
+// Parameter is number of bits in concatenated bit-vector
 module cv32e40s_compare #(parameter int N = 4)(
     input logic [N-1:0] core_master,
     input logic [N-1:0] core_checker,

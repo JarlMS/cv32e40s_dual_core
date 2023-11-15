@@ -698,6 +698,44 @@ module cv32e40s_core import cv32e40s_pkg::*;
     .ctrl_fsm_i                 ( ctrl_fsm             )
   );
 
+  generate if (ENABLE_DUAL_CORES == 1) begin 
+    cv32e40s_sleep_unit
+  #(
+    .LIB                        ( LIB                  )
+  )
+  sleep_unit_i_compare
+  (
+    // Clock, reset interface
+    .clk_ungated_i              ( clk_i                ),       // Ungated clock
+    .rst_n                      ( rst_ni               ),
+    .clk_gated_o                ( clk                  ),       // Gated clock
+    .scan_cg_en_i               ( scan_cg_en_i         ),
+
+    // Core sleep
+    .core_sleep_o               ( core_sleep_o_compare         ),
+
+    // Fetch enable
+    .fetch_enable_i             ( fetch_enable_i       ),
+    .fetch_enable_o             ( fetch_enable         ),
+
+    // Core status
+    .if_busy_i                  ( if_busy_compare              ),
+    .lsu_busy_i                 ( lsu_busy_compare             ),
+
+    // Inputs from controller (including busy)
+    .ctrl_fsm_i                 ( ctrl_fsm_compare             )
+  );
+
+  cv32e40s_compare #(.N ($bits({core_sleep_o_compare, if_busy_compare, lsu_busy_compare, ctrl_fsm_compare})))
+  sleep_unit_compare
+  (
+    .core_master ({core_sleep_o, if_busy, lsu_busy, ctrl_fsm}),
+    .core_checker ({core_sleep_o_compare, if_busy_compare, lsu_busy_compare, ctrl_fsm_compare}),
+    .error (alert_major_o)
+  );
+  end 
+  endgenerate
+
   /////////////////////////////////////
   //      _    _           _         //
   //     / \  | | ___ _ __| |_ ___   //
