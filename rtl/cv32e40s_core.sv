@@ -839,7 +839,7 @@ generate if (ENABLE_DUAL_CORES == 1) begin
     .DM_REGION_START     ( DM_REGION_START          ),
     .DM_REGION_END       ( DM_REGION_END            )
   )
-  if_stage_i
+  if_stage_i_compare
   (
     .clk                 ( clk                      ),
     .rst_n               ( rst_ni                   ),
@@ -940,7 +940,7 @@ cv32e40s_compare #(
     integrity_err_if_compare,
     protocol_err_if_compare
     }))
-) sleep_unit_compare (
+) if_stage_compare (
   .core_master ({
     boot_addr_i,
     branch_target_ex,
