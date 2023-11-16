@@ -963,13 +963,13 @@ endgenerate
 
     cv32e40s_compare 
         #(
-          .N $bits(if_id_compare_o)
+          .N ($bits(if_id_compare_o))
         )
     if_id_stage_compare (
       .core_master (core_i.if_id_compare_o),
       .core_checker (core_i_compare.if_id_compare_o),
       .error (alert_compare_o[0])
-    ) 
+    );
 
 
 endmodule
