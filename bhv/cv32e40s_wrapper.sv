@@ -150,7 +150,6 @@ module cv32e40s_wrapper
   // Security Alerts
   output logic        alert_minor_o,
   output logic        alert_major_o,
-  output logic [2:0]  alert_comapre_error_o,
 
   // Debug Interface
   input  logic        debug_req_i,
