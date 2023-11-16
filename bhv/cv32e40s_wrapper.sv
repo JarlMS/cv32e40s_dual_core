@@ -971,5 +971,25 @@ endgenerate
       .error (alert_compare_o[0])
     );
 
+    cv32e40s_compare 
+        #(
+          .N ($bits(id_ex_compare_o))
+        )
+    id_ex_stage_compare (
+      .core_master (core_i.id_ex_compare_o),
+      .core_checker (core_i_compare.id_ex_compare_o),
+      .error (alert_compare_o[1])
+    );
+
+    cv32e40s_compare 
+        #(
+          .N ($bits(ex_wb_compare_o))
+        )
+    ex_wb_stage_compare (
+      .core_master (core_i.ex_wb_compare_o),
+      .core_checker (core_i_compare.ex_wb_compare_o),
+      .error (alert_compare_o[2])
+    );
+
 
 endmodule
