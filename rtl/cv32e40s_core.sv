@@ -608,12 +608,6 @@ module cv32e40s_core import cv32e40s_pkg::*;
   cv32e40s_if_c_obi #(.REQ_TYPE(obi_inst_req_t), .RESP_TYPE(obi_inst_resp_t))  m_c_obi_instr_if();
   cv32e40s_if_c_obi #(.REQ_TYPE(obi_data_req_t), .RESP_TYPE(obi_data_resp_t))  m_c_obi_data_if();
 
-  //generate if (ENABLE_DUAL_CORES == 1) begin
-    cv32e40s_if_c_obi #(.REQ_TYPE(obi_inst_req_t), .RESP_TYPE(obi_inst_resp_t))  m_c_obi_instr_if_compare();
-    cv32e40s_if_c_obi #(.REQ_TYPE(obi_data_req_t), .RESP_TYPE(obi_data_resp_t))  m_c_obi_data_if_compare();
-  //end 
-  //endgenerate
-
   // Connect toplevel OBI signals to internal interfaces
   assign instr_req_o                         = m_c_obi_instr_if.s_req.req;
   assign instr_reqpar_o                      = m_c_obi_instr_if.s_req.reqpar;
@@ -652,48 +646,6 @@ module cv32e40s_core import cv32e40s_pkg::*;
   assign m_c_obi_data_if.resp_payload.rchk   = data_rchk_i;
   assign m_c_obi_data_if.resp_payload.integrity_err = 1'b0; // Tie off here, will we populated in data_obi_interface.
   assign m_c_obi_data_if.resp_payload.integrity     = 1'b0; // Tie off here, will we populated in data_obi_interface.
-
-  generate if (ENABLE_DUAL_CORES == 1) begin 
-    // Connect toplevel OBI signals to internal interfaces
-    assign instr_req_o                         = m_c_obi_instr_if_compare.s_req.req;
-    assign instr_reqpar_o                      = m_c_obi_instr_if_compare.s_req.reqpar;
-    assign instr_addr_o                        = {m_c_obi_instr_if_compare.req_payload.addr[31:2], 2'b0};
-    assign instr_memtype_o                     = m_c_obi_instr_if_compare.req_payload.memtype;
-    assign instr_prot_o                        = m_c_obi_instr_if_compare.req_payload.prot;
-    assign instr_dbg_o                         = m_c_obi_instr_if_compare.req_payload.dbg;
-    assign instr_achk_o                        = m_c_obi_instr_if_compare.req_payload.achk;
-    assign m_c_obi_instr_if_compare.s_gnt.gnt          = instr_gnt_i;
-    assign m_c_obi_instr_if_compare.s_gnt.gntpar       = instr_gntpar_i;
-    assign m_c_obi_instr_if_compare.s_rvalid.rvalid    = instr_rvalid_i;
-    assign m_c_obi_instr_if_compare.s_rvalid.rvalidpar = instr_rvalidpar_i;
-    assign m_c_obi_instr_if_compare.resp_payload.rdata = instr_rdata_i;
-    assign m_c_obi_instr_if_compare.resp_payload.err   = instr_err_i;
-    assign m_c_obi_instr_if_compare.resp_payload.rchk  = instr_rchk_i;
-    assign m_c_obi_instr_if_compare.resp_payload.integrity_err = 1'b0; // Tie off here, will we populated in instr_obi_interface.
-    assign m_c_obi_instr_if_compare.resp_payload.integrity     = 1'b0; // Tie off here, will we populated in instr_obi_interface.
-
-    assign data_req_o                          = m_c_obi_data_if_compare.s_req.req;
-    assign data_reqpar_o                       = m_c_obi_data_if_compare.s_req.reqpar;
-    assign data_we_o                           = m_c_obi_data_if_compare.req_payload.we;
-    assign data_be_o                           = m_c_obi_data_if_compare.req_payload.be;
-    assign data_addr_o                         = m_c_obi_data_if_compare.req_payload.addr;
-    assign data_memtype_o                      = m_c_obi_data_if_compare.req_payload.memtype;
-    assign data_prot_o                         = m_c_obi_data_if_compare.req_payload.prot;
-    assign data_dbg_o                          = m_c_obi_data_if_compare.req_payload.dbg;
-    assign data_wdata_o                        = m_c_obi_data_if_compare.req_payload.wdata;
-    assign data_achk_o                         = m_c_obi_data_if_compare.req_payload.achk;
-    assign m_c_obi_data_if_compare.s_gnt.gnt           = data_gnt_i;
-    assign m_c_obi_data_if_compare.s_gnt.gntpar        = data_gntpar_i;
-    assign m_c_obi_data_if_compare.s_rvalid.rvalid     = data_rvalid_i;
-    assign m_c_obi_data_if_compare.s_rvalid.rvalidpar  = data_rvalidpar_i;
-    assign m_c_obi_data_if_compare.resp_payload.rdata  = data_rdata_i;
-    assign m_c_obi_data_if_compare.resp_payload.err[0] = data_err_i;
-    assign m_c_obi_data_if_compare.resp_payload.err[1] = 1'b0; // Will be assigned in the response filter
-    assign m_c_obi_data_if_compare.resp_payload.rchk   = data_rchk_i;
-    assign m_c_obi_data_if_compare.resp_payload.integrity_err = 1'b0; // Tie off here, will we populated in data_obi_interface.
-    assign m_c_obi_data_if_compare.resp_payload.integrity     = 1'b0; // Tie off here, will we populated in data_obi_interface.
-  end 
-  endgenerate
 
   assign debug_havereset_o = ctrl_fsm.debug_havereset;
   assign debug_halted_o    = ctrl_fsm.debug_halted;
@@ -908,7 +860,7 @@ generate if (ENABLE_DUAL_CORES == 1 && 0) begin
     .last_sec_op_id_i    ( last_sec_op_id_compare           ),
     .pc_err_o            ( pc_err_if_compare                ),
 
-    .m_c_obi_instr_if    ( m_c_obi_instr_if_compare.master  ), // Instruction bus interface
+    .m_c_obi_instr_if    ( m_c_obi_instr_if.master  ), // Instruction bus interface
 
     .if_id_pipe_o        ( if_id_pipe_compare               ),
     .id_ex_pipe_i        ( id_ex_pipe_compare               ),
@@ -1042,7 +994,7 @@ cv32e40s_id_stage
     .jmp_target_o                 ( jump_target_id_compare            ),
 
     // IF/ID pipeline
-    .if_id_pipe_i                 ( if_id_pipe_compare                ), 
+    .if_id_pipe_i                 ( if_id_pipe                ), // Connected to master IF/ID pipeline
 
     // ID/EX pipeline
     .id_ex_pipe_o                 ( id_ex_pipe_compare                ),
@@ -1100,7 +1052,7 @@ cv32e40s_compare #(
     if_id_pipe
   }),
   .core_checker ({
-    if_id_pipe_compare
+    if_id_pipe
   }),
   .error (alert_compare_error_o[1])
 );
@@ -1181,7 +1133,7 @@ endgenerate
     .rst_n                      ( rst_ni                       ),
 
     // IF/ID pipeline
-    .if_id_pipe_i               ( if_id_pipe_compare                   ),
+    .if_id_pipe_i               ( if_id_pipe                   ), //Connected to master IF/ID pipeline
 
     // ID/EX pipeline
     .id_ex_pipe_i               ( id_ex_pipe_compare                   ),
