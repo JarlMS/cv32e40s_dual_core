@@ -1118,7 +1118,7 @@ cv32e40s_id_stage
     .jmp_target_o                 ( jump_target_id_compare            ),
 
     // IF/ID pipeline
-    .if_id_pipe_i                 ( if_id_pipe_compare                ),
+    .if_id_pipe_i                 ( if_id_pipe                ),
 
     // ID/EX pipeline
     .id_ex_pipe_o                 ( id_ex_pipe_compare                ),
@@ -1198,7 +1198,7 @@ cv32e40s_compare #(
     ex_ready_compare,
     lfsr_shift_id_compare
     }))
-) if_stage_compare (
+) id_stage_compare (
   .core_master ({
     jump_target_id,
     if_id_pipe,
