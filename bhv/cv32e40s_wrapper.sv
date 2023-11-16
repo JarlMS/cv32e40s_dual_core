@@ -992,7 +992,7 @@ generate if (ENABLE_DUAL_CORES == 1) begin
       .error (alert_compare_o[2])
     );
 
-    assign core_i.if_id_pipe_i.pc = 0;
+    assign core_i.id_stage_i.if_id_pipe_i.pc = 0;
 end
 endgenerate
 
