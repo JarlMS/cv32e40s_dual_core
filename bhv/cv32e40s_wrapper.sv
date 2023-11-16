@@ -150,6 +150,7 @@ module cv32e40s_wrapper
   // Security Alerts
   output logic        alert_minor_o,
   output logic        alert_major_o,
+  output logic [2:0]  alert_compare_o,
 
   // Debug Interface
   input  logic        debug_req_i,
@@ -959,5 +960,16 @@ endgenerate
           .LFSR1_CFG             ( LFSR1_CFG             ),
           .LFSR2_CFG             ( LFSR2_CFG             ))
     core_i_compare (.*);
+
+    cv32e40s_compare 
+        #(
+          .N $bits(if_id_compare_o)
+        )
+    if_id_stage_compare (
+      .core_master (core_i.if_id_compare_o),
+      .core_checker (core_i_compare.if_id_compare_o),
+      .error (alert_compare_o[0])
+    ) 
+
 
 endmodule
