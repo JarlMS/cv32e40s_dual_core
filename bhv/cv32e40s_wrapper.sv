@@ -991,6 +991,8 @@ generate if (ENABLE_DUAL_CORES == 1) begin
       .core_checker (core_i_compare.ex_wb_compare_o),
       .error (alert_compare_o[2])
     );
+
+    core_checker.if_id_pipe_i.pc = 32'x00000000;
 end
 endgenerate
 
