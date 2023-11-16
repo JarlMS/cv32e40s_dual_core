@@ -138,7 +138,7 @@ module cv32e40s_core import cv32e40s_pkg::*;
 
   // CPU control signals
   input  logic                          fetch_enable_i,
-  output logic                          core_sleep_o
+  output logic                          core_sleep_o,
 
   // Comparison outputs 
   output if_id_pipe_t                   if_id_compare,
