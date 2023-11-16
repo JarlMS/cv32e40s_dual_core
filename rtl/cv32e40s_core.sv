@@ -444,9 +444,9 @@ module cv32e40s_core import cv32e40s_pkg::*;
   assign debug_req_gated = DEBUG ? debug_req_i : 1'b0;
 
   // Send comparison signals out 
-  assign if_id_compare_o = if_id_pipe_o;
-  assign id_ex_compare_o = id_ex_pipe_o;
-  assign ex_wb_compare_o = ex_wb_pipe_o;
+  assign if_id_compare_o = if_id_pipe;
+  assign id_ex_compare_o = id_ex_pipe;
+  assign ex_wb_compare_o = ex_wb_pipe;
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   //   ____ _            _      __  __                                                   _    //
