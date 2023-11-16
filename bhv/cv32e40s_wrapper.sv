@@ -936,4 +936,28 @@ endgenerate
           .LFSR2_CFG             ( LFSR2_CFG             ))
     core_i (.*);
 
+    cv32e40s_core
+        #(
+          .LIB                   ( LIB                   ),
+          .RV32                  ( RV32                  ),
+          .B_EXT                 ( B_EXT                 ),
+          .M_EXT                 ( M_EXT                 ),
+          .PMP_GRANULARITY       ( PMP_GRANULARITY       ),
+          .PMP_NUM_REGIONS       ( PMP_NUM_REGIONS       ),
+          .PMP_PMPNCFG_RV        ( PMP_PMPNCFG_RV        ),
+          .PMP_PMPADDR_RV        ( PMP_PMPADDR_RV        ),
+          .PMP_MSECCFG_RV        ( PMP_MSECCFG_RV        ),
+          .CLIC                  ( CLIC                  ),
+          .CLIC_ID_WIDTH         ( CLIC_ID_WIDTH         ),
+          .DEBUG                 ( DEBUG                 ),
+          .DM_REGION_START       ( DM_REGION_START       ),
+          .DM_REGION_END         ( DM_REGION_END         ),
+          .DBG_NUM_TRIGGERS      ( DBG_NUM_TRIGGERS      ),
+          .PMA_NUM_REGIONS       ( PMA_NUM_REGIONS       ),
+          .PMA_CFG               ( PMA_CFG               ),
+          .LFSR0_CFG             ( LFSR0_CFG             ),
+          .LFSR1_CFG             ( LFSR1_CFG             ),
+          .LFSR2_CFG             ( LFSR2_CFG             ))
+    core_i_compare (.*);
+
 endmodule
