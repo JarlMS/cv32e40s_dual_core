@@ -164,9 +164,9 @@ module cv32e40s_wrapper
   output logic        core_sleep_o,
 
   // Comparison outputs 
-  output if_id_pipe_t                   if_id_compare,
-  output id_ex_pipe_t                   id_ex_compare,
-  output ex_wb_pipe_t                   ex_wb_compare
+  output if_id_pipe_t                   if_id_compare_o,
+  output id_ex_pipe_t                   id_ex_compare_o,
+  output ex_wb_pipe_t                   ex_wb_compare_o
 
 `ifdef RISCV_FORMAL
   ,`RVFI_OUTPUTS

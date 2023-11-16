@@ -140,9 +140,9 @@ module cv32e40s_core import cv32e40s_pkg::*;
   output logic                          core_sleep_o,
 
   // Comparison outputs 
-  output if_id_pipe_t                   if_id_compare,
-  output id_ex_pipe_t                   id_ex_compare,
-  output ex_wb_pipe_t                   ex_wb_compare
+  output if_id_pipe_t                   if_id_compare_o,
+  output id_ex_pipe_t                   id_ex_compare_o,
+  output ex_wb_pipe_t                   ex_wb_compare_o
 );
 
   // No additional hardware performance counters
@@ -442,6 +442,11 @@ module cv32e40s_core import cv32e40s_pkg::*;
 
   // Gate off the internal debug_request signal if debug support is not configured.
   assign debug_req_gated = DEBUG ? debug_req_i : 1'b0;
+
+  // Send comparison signals out 
+  assign if_id_compare_o = if_id_pipe_o;
+  assign id_ex_compare_o = id_ex_pipe_o;
+  assign ex_wb_compare_o = ex_wb_pipe_o;
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   //   ____ _            _      __  __                                                   _    //
