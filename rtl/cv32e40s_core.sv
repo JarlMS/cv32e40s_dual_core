@@ -608,6 +608,12 @@ module cv32e40s_core import cv32e40s_pkg::*;
   cv32e40s_if_c_obi #(.REQ_TYPE(obi_inst_req_t), .RESP_TYPE(obi_inst_resp_t))  m_c_obi_instr_if();
   cv32e40s_if_c_obi #(.REQ_TYPE(obi_data_req_t), .RESP_TYPE(obi_data_resp_t))  m_c_obi_data_if();
 
+  generate if (ENABLE_DUAL_CORES == 1) begin
+    cv32e40s_if_c_obi #(.REQ_TYPE(obi_inst_req_t), .RESP_TYPE(obi_inst_resp_t))  m_c_obi_instr_if_compare();
+    cv32e40s_if_c_obi #(.REQ_TYPE(obi_data_req_t), .RESP_TYPE(obi_data_resp_t))  m_c_obi_data_if_compare();
+  end 
+  endgenerate
+
   // Connect toplevel OBI signals to internal interfaces
   assign instr_req_o                         = m_c_obi_instr_if.s_req.req;
   assign instr_reqpar_o                      = m_c_obi_instr_if.s_req.reqpar;
@@ -646,6 +652,48 @@ module cv32e40s_core import cv32e40s_pkg::*;
   assign m_c_obi_data_if.resp_payload.rchk   = data_rchk_i;
   assign m_c_obi_data_if.resp_payload.integrity_err = 1'b0; // Tie off here, will we populated in data_obi_interface.
   assign m_c_obi_data_if.resp_payload.integrity     = 1'b0; // Tie off here, will we populated in data_obi_interface.
+
+  generate if (ENABLE_DUAL_CORES == 1) begin 
+    // Connect toplevel OBI signals to internal interfaces
+    assign instr_req_o                         = m_c_obi_instr_if_compare.s_req.req;
+    assign instr_reqpar_o                      = m_c_obi_instr_if_compare.s_req.reqpar;
+    assign instr_addr_o                        = {m_c_obi_instr_if_compare.req_payload.addr[31:2], 2'b0};
+    assign instr_memtype_o                     = m_c_obi_instr_if_compare.req_payload.memtype;
+    assign instr_prot_o                        = m_c_obi_instr_if_compare.req_payload.prot;
+    assign instr_dbg_o                         = m_c_obi_instr_if_compare.req_payload.dbg;
+    assign instr_achk_o                        = m_c_obi_instr_if_compare.req_payload.achk;
+    assign m_c_obi_instr_if_compare.s_gnt.gnt          = instr_gnt_i;
+    assign m_c_obi_instr_if_compare.s_gnt.gntpar       = instr_gntpar_i;
+    assign m_c_obi_instr_if_compare.s_rvalid.rvalid    = instr_rvalid_i;
+    assign m_c_obi_instr_if_compare.s_rvalid.rvalidpar = instr_rvalidpar_i;
+    assign m_c_obi_instr_if_compare.resp_payload.rdata = instr_rdata_i;
+    assign m_c_obi_instr_if_compare.resp_payload.err   = instr_err_i;
+    assign m_c_obi_instr_if_compare.resp_payload.rchk  = instr_rchk_i;
+    assign m_c_obi_instr_if_compare.resp_payload.integrity_err = 1'b0; // Tie off here, will we populated in instr_obi_interface.
+    assign m_c_obi_instr_if_compare.resp_payload.integrity     = 1'b0; // Tie off here, will we populated in instr_obi_interface.
+
+    assign data_req_o                          = m_c_obi_data_if_compare.s_req.req;
+    assign data_reqpar_o                       = m_c_obi_data_if_compare.s_req.reqpar;
+    assign data_we_o                           = m_c_obi_data_if_compare.req_payload.we;
+    assign data_be_o                           = m_c_obi_data_if_compare.req_payload.be;
+    assign data_addr_o                         = m_c_obi_data_if_compare.req_payload.addr;
+    assign data_memtype_o                      = m_c_obi_data_if_compare.req_payload.memtype;
+    assign data_prot_o                         = m_c_obi_data_if_compare.req_payload.prot;
+    assign data_dbg_o                          = m_c_obi_data_if_compare.req_payload.dbg;
+    assign data_wdata_o                        = m_c_obi_data_if_compare.req_payload.wdata;
+    assign data_achk_o                         = m_c_obi_data_if_compare.req_payload.achk;
+    assign m_c_obi_data_if_compare.s_gnt.gnt           = data_gnt_i;
+    assign m_c_obi_data_if_compare.s_gnt.gntpar        = data_gntpar_i;
+    assign m_c_obi_data_if_compare.s_rvalid.rvalid     = data_rvalid_i;
+    assign m_c_obi_data_if_compare.s_rvalid.rvalidpar  = data_rvalidpar_i;
+    assign m_c_obi_data_if_compare.resp_payload.rdata  = data_rdata_i;
+    assign m_c_obi_data_if_compare.resp_payload.err[0] = data_err_i;
+    assign m_c_obi_data_if_compare.resp_payload.err[1] = 1'b0; // Will be assigned in the response filter
+    assign m_c_obi_data_if_compare.resp_payload.rchk   = data_rchk_i;
+    assign m_c_obi_data_if_compare.resp_payload.integrity_err = 1'b0; // Tie off here, will we populated in data_obi_interface.
+    assign m_c_obi_data_if_compare.resp_payload.integrity     = 1'b0; // Tie off here, will we populated in data_obi_interface.
+  end 
+  endgenerate
 
   assign debug_havereset_o = ctrl_fsm.debug_havereset;
   assign debug_halted_o    = ctrl_fsm.debug_halted;
@@ -860,7 +908,7 @@ generate if (ENABLE_DUAL_CORES == 1 && 0) begin
     .last_sec_op_id_i    ( last_sec_op_id_compare           ),
     .pc_err_o            ( pc_err_if_compare                ),
 
-    .m_c_obi_instr_if    ( m_c_obi_instr_if.master  ), // Instruction bus interface
+    .m_c_obi_instr_if    ( m_c_obi_instr_if_compare.master  ), // Instruction bus interface
 
     .if_id_pipe_o        ( if_id_pipe_compare               ),
     .id_ex_pipe_i        ( id_ex_pipe_compare               ),
@@ -899,130 +947,6 @@ generate if (ENABLE_DUAL_CORES == 1 && 0) begin
     .integrity_err_o     ( integrity_err_if_compare         ),
     .protocol_err_o      ( protocol_err_if_compare          )
 );
-
-cv32e40s_compare #(
-  .N ($bits({
-    boot_addr_i,
-    branch_target_ex_compare,
-    dm_exception_addr_i,
-    dm_halt_addr_i,
-    dpc_compare,
-    jump_target_id_compare,
-    mepc_compare,
-    mtvec_addr_compare,
-    mtvt_addr_compare,
-    jvt_mode_compare,
-    branch_decision_ex_compare,
-    last_sec_op_id_compare,
-    pc_err_if_compare,
-    if_id_pipe_compare,
-    id_ex_pipe_compare,
-    ctrl_fsm_compare,
-    trigger_match_if_compare,
-    pc_if_compare,
-    csr_mtvec_init_if_compare,
-    if_busy_compare,
-    ptr_in_if_compare,
-    priv_lvl_if_compare,
-    last_op_if_compare,
-    abort_op_if_compare,
-    if_valid_compare,
-    id_ready_compare,
-    id_valid_compare,
-    ex_ready_compare,
-    ex_valid_compare,
-    wb_ready_compare,
-    csr_pmp_compare,
-    mstateen0_compare,
-    priv_lvl_if_ctrl_compare,
-    xsecure_ctrl_compare,
-    lfsr_shift_if_compare,
-    integrity_err_if_compare,
-    protocol_err_if_compare
-    }))
-) if_stage_compare (
-  .core_master ({
-    boot_addr_i,
-    branch_target_ex,
-    dm_exception_addr_i,
-    dm_halt_addr_i,
-    dpc,
-    jump_target_id,
-    mepc,
-    mtvec_addr,
-    mtvt_addr,
-    jvt_mode,
-    branch_decision_ex,
-    last_sec_op_id,
-    pc_err_if,
-    if_id_pipe,
-    id_ex_pipe,
-    ctrl_fsm,
-    trigger_match_if,
-    pc_if,
-    csr_mtvec_init_if,
-    if_busy,
-    ptr_in_if,
-    priv_lvl_if,
-    last_op_if,
-    abort_op_if,
-    if_valid,
-    id_ready,
-    id_valid,
-    ex_ready,
-    ex_valid,
-    wb_ready,
-    csr_pmp,
-    mstateen0,
-    priv_lvl_if_ctrl,
-    xsecure_ctrl,
-    lfsr_shift_if,
-    integrity_err_if,
-    protocol_err_if
-  }),
-  .core_checker ({
-    boot_addr_i,
-    branch_target_ex_compare,
-    dm_exception_addr_i,
-    dm_halt_addr_i,
-    dpc_compare,
-    jump_target_id_compare,
-    mepc_compare,
-    mtvec_addr_compare,
-    mtvt_addr_compare,
-    jvt_mode_compare,
-    branch_decision_ex_compare,
-    last_sec_op_id_compare,
-    pc_err_if_compare,
-    if_id_pipe_compare,
-    id_ex_pipe_compare,
-    ctrl_fsm_compare,
-    trigger_match_if_compare,
-    pc_if_compare,
-    csr_mtvec_init_if_compare,
-    if_busy_compare,
-    ptr_in_if_compare,
-    priv_lvl_if_compare,
-    last_op_if_compare,
-    abort_op_if_compare,
-    if_valid_compare,
-    id_ready_compare,
-    id_valid_compare,
-    ex_ready_compare,
-    ex_valid_compare,
-    wb_ready_compare,
-    csr_pmp_compare,
-    mstateen0_compare,
-    priv_lvl_if_ctrl_compare,
-    xsecure_ctrl_compare,
-    lfsr_shift_if_compare,
-    integrity_err_if_compare,
-    protocol_err_if_compare
-  }),
-  .error (alert_compare_error_o[0])
-);
-
-
 end
 endgenerate
 
@@ -1118,7 +1042,7 @@ cv32e40s_id_stage
     .jmp_target_o                 ( jump_target_id_compare            ),
 
     // IF/ID pipeline
-    .if_id_pipe_i                 ( if_id_pipe                ),
+    .if_id_pipe_i                 ( if_id_pipe_compare                ), 
 
     // ID/EX pipeline
     .id_ex_pipe_o                 ( id_ex_pipe_compare                ),
@@ -1169,95 +1093,14 @@ cv32e40s_id_stage
 
 cv32e40s_compare #(
   .N ($bits({
-    jump_target_id_compare,
-    if_id_pipe_compare,
-    id_ex_pipe_compare,
-    ex_wb_pipe_compare,
-    ctrl_byp_compare,
-    ctrl_fsm_compare,
-    mstatus_compare,
-    xsecure_ctrl_compare,
-    mcause_compare,
-    jvt_addr_compare,
-    rf_wdata_ex_compare,
-    rf_wdata_wb_compare,
-    alu_en_id_compare,
-    alu_jmp_id_compare,
-    alu_jmpr_id_compare,
-    sys_mret_insn_id_compare,
-    sys_wfi_insn_id_compare,
-    sys_wfe_insn_id_compare,
-    csr_en_raw_id_compare,
-    sys_en_id_compare,
-    first_op_id_compare,
-    last_op_id_compare,
-    abort_op_id_compare,
-    rf_re_id_compare,
-    id_ready_compare,
-    id_valid_compare,
-    ex_ready_compare,
-    lfsr_shift_id_compare
+    if_id_pipe_compare
     }))
 ) id_stage_compare (
   .core_master ({
-    jump_target_id,
-    if_id_pipe,
-    id_ex_pipe,
-    ex_wb_pipe,
-    ctrl_byp,
-    ctrl_fsm,
-    mstatus,
-    xsecure_ctrl,
-    mcause,
-    jvt_addr,
-    rf_wdata_ex,
-    rf_wdata_wb,
-    alu_en_id,
-    alu_jmp_id,
-    alu_jmpr_id,
-    sys_mret_insn_id,
-    sys_wfi_insn_id,
-    sys_wfe_insn_id,
-    csr_en_raw_id,
-    sys_en_id,
-    first_op_id,
-    last_op_id,
-    abort_op_id,
-    rf_re_id,
-    id_ready,
-    id_valid,
-    ex_ready,
-    lfsr_shift_id
+    if_id_pipe
   }),
   .core_checker ({
-    jump_target_id_compare,
-    if_id_pipe_compare,
-    id_ex_pipe_compare,
-    ex_wb_pipe_compare,
-    ctrl_byp_compare,
-    ctrl_fsm_compare,
-    mstatus_compare,
-    xsecure_ctrl_compare,
-    mcause_compare,
-    jvt_addr_compare,
-    rf_wdata_ex_compare,
-    rf_wdata_wb_compare,
-    alu_en_id_compare,
-    alu_jmp_id_compare,
-    alu_jmpr_id_compare,
-    sys_mret_insn_id_compare,
-    sys_wfi_insn_id_compare,
-    sys_wfe_insn_id_compare,
-    csr_en_raw_id_compare,
-    sys_en_id_compare,
-    first_op_id_compare,
-    last_op_id_compare,
-    abort_op_id_compare,
-    rf_re_id_compare,
-    id_ready_compare,
-    id_valid_compare,
-    ex_ready_compare,
-    lfsr_shift_id_compare
+    if_id_pipe_compare
   }),
   .error (alert_compare_error_o[1])
 );
@@ -1325,6 +1168,76 @@ endgenerate
     .wb_ready_i                 ( wb_ready                     ),
     .last_op_o                  ( last_op_ex                   )
   );
+
+  generate if (ENABLE_DUAL_CORES == 1) begin 
+  cv32e40s_ex_stage
+  #(
+    .B_EXT                      ( B_EXT                        ),
+    .M_EXT                      ( M_EXT                        )
+  )
+  ex_stage_i_compare
+  (
+    .clk                        ( clk                          ),
+    .rst_n                      ( rst_ni                       ),
+
+    // IF/ID pipeline
+    .if_id_pipe_i               ( if_id_pipe_compare                   ),
+
+    // ID/EX pipeline
+    .id_ex_pipe_i               ( id_ex_pipe_compare                   ),
+
+    // EX/WB pipeline
+    .ex_wb_pipe_o               ( ex_wb_pipe_compare                   ),
+
+    // From controller FSM
+    .ctrl_fsm_i                 ( ctrl_fsm_compare                     ),
+
+    // Xsecure control
+    .xsecure_ctrl_i             ( xsecure_ctrl_compare                 ),
+
+    // CSR interface
+    .csr_rdata_i                ( csr_rdata_compare                    ),
+    .csr_illegal_i              ( csr_illegal_compare                  ),
+    .csr_mnxti_read_i           ( csr_mnxti_read_compare               ),
+    .csr_hz_i                   ( csr_hz_compare                       ),
+
+    // Branch decision
+    .branch_decision_o          ( branch_decision_ex_compare           ),
+    .branch_target_o            ( branch_target_ex_compare             ),
+
+    // Register file forwarding
+    .rf_wdata_o                 ( rf_wdata_ex_compare                  ),
+
+    // LSU interface
+    .lsu_valid_i                ( lsu_valid_0_compare                  ),
+    .lsu_ready_o                ( lsu_ready_ex_compare                 ),
+    .lsu_valid_o                ( lsu_valid_ex_compare                 ),
+    .lsu_ready_i                ( lsu_ready_0_compare                  ),
+    .lsu_split_i                ( lsu_split_ex_compare                 ),
+    .lsu_last_op_i              ( lsu_last_op_ex_compare               ),
+    .lsu_first_op_i             ( lsu_first_op_ex_compare              ),
+
+    // Pipeline handshakes
+    .ex_ready_o                 ( ex_ready_compare                     ),
+    .ex_valid_o                 ( ex_valid_compare                     ),
+    .wb_ready_i                 ( wb_ready_compare                     ),
+    .last_op_o                  ( last_op_ex_compare                   )
+  );
+  cv32e40s_compare #(
+  .N ($bits({
+    id_ex_pipe_compare
+    }))
+  ) ex_stage_compare (
+  .core_master ({
+    id_ex_pipe
+  }),
+  .core_checker ({
+    id_ex_pipe_compare
+  }),
+  .error (alert_compare_error_o[2])
+);
+  end
+  endgenerate
 
   ////////////////////////////////////////////////////////////////////////////////////////
   //    _     ___    _    ____    ____ _____ ___  ____  _____   _   _ _   _ ___ _____   //
