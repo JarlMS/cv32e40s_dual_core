@@ -937,6 +937,7 @@ endgenerate
           .LFSR2_CFG             ( LFSR2_CFG             ))
     core_i (.*);
 
+generate if (ENABLE_DUAL_CORES == 1) begin
     cv32e40s_core
         #(
           .LIB                   ( LIB                   ),
@@ -990,6 +991,8 @@ endgenerate
       .core_checker (core_i_compare.ex_wb_compare_o),
       .error (alert_compare_o[2])
     );
+end
+endgenerate
 
 
 endmodule
