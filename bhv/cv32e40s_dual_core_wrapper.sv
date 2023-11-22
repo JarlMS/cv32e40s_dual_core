@@ -1351,6 +1351,45 @@ module cv32e40s_dual_core import cv32e40s_pkg::*;
   id_ex_pipe_t                   id_ex_compare_o_cmp;
   ex_wb_pipe_t                   ex_wb_compare_o_cmp;
 
+  // Register for output form main core
+  logic         instr_req_o_reg;         
+  logic [31:0]  instr_addr_o_reg;        
+  logic [1:0]   instr_memtype_o_reg;     
+  logic [2:0]   instr_prot_o_reg;        
+  logic         instr_dbg_o_reg;         
+  logic         instr_reqpar_o_reg;      
+  logic [12:0]  instr_achk_o_reg;        
+
+  logic         data_req_o_reg;          
+  logic [31:0]  data_addr_o_reg;         
+  logic [3:0]   data_be_o_reg;           
+  logic         data_we_o_reg;           
+  logic [31:0]  data_wdata_o_reg;        
+  logic [1:0]   data_memtype_o_reg;      
+  logic [2:0]   data_prot_o_reg;           
+  logic         data_dbg_o_reg;          
+  logic         data_reqpar_o_reg;       
+  logic [12:0]  data_achk_o_reg;       
+
+  logic [63:0]  mcycle_o_reg;  
+
+  logic         fencei_flush_req_o_reg;  
+
+  logic         alert_minor_o_reg;       
+  logic         alert_major_o_reg;
+
+  logic         debug_havereset_o_reg;   
+  logic         debug_running_o_reg;     
+  logic         debug_halted_o_reg;      
+  logic         debug_pc_valid_o_reg;    
+  logic [31:0]  debug_pc_o_reg;       
+
+  logic [31:0]  core_sleep_o_reg;   
+
+  if_id_pipe_t  if_id_compare_o_reg;     
+  id_ex_pipe_t  id_ex_compare_o_reg;    
+  ex_wb_pipe_t  ex_wb_compare_o_reg;     
+
 always_ff @(posedge clk_i or negedge rst_ni) begin
   if (!rst_ni) begin 
     // Registers for holding input data going to comparison core
