@@ -1266,262 +1266,262 @@ module cv32e40s_dual_core import cv32e40s_pkg::*;
 // Dual core 
 
   // Static configuration
-  logic [31:0]                   boot_addr_i_cmp;
-  logic [31:0]                   dm_exception_addr_i_cmp;
-  logic [31:0]                   dm_halt_addr_i_cmp;
-  logic [31:0]                   mhartid_i_cmp;
-  logic  [3:0]                   mimpid_patch_i_cmp;
-  logic [31:0]                   mtvec_addr_i_cmp;
+//   logic [31:0]                   boot_addr_i_cmp;
+//   logic [31:0]                   dm_exception_addr_i_cmp;
+//   logic [31:0]                   dm_halt_addr_i_cmp;
+//   logic [31:0]                   mhartid_i_cmp;
+//   logic  [3:0]                   mimpid_patch_i_cmp;
+//   logic [31:0]                   mtvec_addr_i_cmp;
 
-  // Instruction memory interface
-  logic                          instr_req_o_cmp;
-  logic                          instr_gnt_i_cmp;
-  logic                          instr_rvalid_i_cmp;
-  logic [31:0]                   instr_addr_o_cmp;
-  logic [1:0]                    instr_memtype_o_cmp;
-  logic [2:0]                    instr_prot_o_cmp;
-  logic                          instr_dbg_o_cmp;
-  logic [31:0]                   instr_rdata_i_cmp;
-  logic                          instr_err_i_cmp;
+//   // Instruction memory interface
+//   logic                          instr_req_o_cmp;
+//   logic                          instr_gnt_i_cmp;
+//   logic                          instr_rvalid_i_cmp;
+//   logic [31:0]                   instr_addr_o_cmp;
+//   logic [1:0]                    instr_memtype_o_cmp;
+//   logic [2:0]                    instr_prot_o_cmp;
+//   logic                          instr_dbg_o_cmp;
+//   logic [31:0]                   instr_rdata_i_cmp;
+//   logic                          instr_err_i_cmp;
 
-  logic                          instr_reqpar_o_cmp;         // secure
-  logic                          instr_gntpar_i_cmp;         // secure
-  logic                          instr_rvalidpar_i_cmp;      // secure
-  logic [12:0]                   instr_achk_o_cmp;           // secure
-  logic [4:0]                    instr_rchk_i_cmp;           // secure
+//   logic                          instr_reqpar_o_cmp;         // secure
+//   logic                          instr_gntpar_i_cmp;         // secure
+//   logic                          instr_rvalidpar_i_cmp;      // secure
+//   logic [12:0]                   instr_achk_o_cmp;           // secure
+//   logic [4:0]                    instr_rchk_i_cmp;           // secure
 
-  // Data memory interface
-  logic                          data_req_o_cmp;
-  logic                          data_gnt_i_cmp;
-  logic                          data_rvalid_i_cmp;
-  logic [31:0]                   data_addr_o_cmp;
-  logic [3:0]                    data_be_o_cmp;
-  logic                          data_we_o_cmp;
-  logic [31:0]                   data_wdata_o_cmp;
-  logic [1:0]                    data_memtype_o_cmp;
-  logic [2:0]                    data_prot_o_cmp;
-  logic                          data_dbg_o_cmp;
-  logic [31:0]                   data_rdata_i_cmp;
-  logic                          data_err_i_cmp;
+//   // Data memory interface
+//   logic                          data_req_o_cmp;
+//   logic                          data_gnt_i_cmp;
+//   logic                          data_rvalid_i_cmp;
+//   logic [31:0]                   data_addr_o_cmp;
+//   logic [3:0]                    data_be_o_cmp;
+//   logic                          data_we_o_cmp;
+//   logic [31:0]                   data_wdata_o_cmp;
+//   logic [1:0]                    data_memtype_o_cmp;
+//   logic [2:0]                    data_prot_o_cmp;
+//   logic                          data_dbg_o_cmp;
+//   logic [31:0]                   data_rdata_i_cmp;
+//   logic                          data_err_i_cmp;
 
-  logic                          data_reqpar_o_cmp;          // secure
-  logic                          data_gntpar_i_cmp;          // secure
-  logic                          data_rvalidpar_i_cmp;       // secure
-  logic [12:0]                   data_achk_o_cmp;            // secure
-  logic [4:0]                    data_rchk_i_cmp;            // secure
+//   logic                          data_reqpar_o_cmp;          // secure
+//   logic                          data_gntpar_i_cmp;          // secure
+//   logic                          data_rvalidpar_i_cmp;       // secure
+//   logic [12:0]                   data_achk_o_cmp;            // secure
+//   logic [4:0]                    data_rchk_i_cmp;            // secure
 
-  // Cycle count
-  logic [63:0]                   mcycle_o_cmp;
+//   // Cycle count
+//   logic [63:0]                   mcycle_o_cmp;
 
-  // Basic interrupt architecture
-  logic [31:0]                   irq_i_cmp;
+//   // Basic interrupt architecture
+//   logic [31:0]                   irq_i_cmp;
 
-  // Event wakeup signals
-  logic                          wu_wfe_i_cmp;   // Wait-for-event wakeup
+//   // Event wakeup signals
+//   logic                          wu_wfe_i_cmp;   // Wait-for-event wakeup
 
-  // CLIC interrupt architecture
-  logic                          clic_irq_i_cmp;
-  logic [CLIC_ID_WIDTH-1:0]      clic_irq_id_i_cmp;
-  logic [ 7:0]                   clic_irq_level_i_cmp;
-  logic [ 1:0]                   clic_irq_priv_i_cmp;
-  logic                          clic_irq_shv_i_cmp;
+//   // CLIC interrupt architecture
+//   logic                          clic_irq_i_cmp;
+//   logic [CLIC_ID_WIDTH-1:0]      clic_irq_id_i_cmp;
+//   logic [ 7:0]                   clic_irq_level_i_cmp;
+//   logic [ 1:0]                   clic_irq_priv_i_cmp;
+//   logic                          clic_irq_shv_i_cmp;
 
-  // Fence.i flush handshake
-  logic                          fencei_flush_req_o_cmp;
-  logic                          fencei_flush_ack_i_cmp;
+//   // Fence.i flush handshake
+//   logic                          fencei_flush_req_o_cmp;
+//   logic                          fencei_flush_ack_i_cmp;
 
-    // Security Alerts
-  logic                          alert_minor_o_cmp;          // secure
-  logic                          alert_major_o_cmp;          // secure
+//     // Security Alerts
+//   logic                          alert_minor_o_cmp;          // secure
+//   logic                          alert_major_o_cmp;          // secure
 
-  // Debug interface
-  logic                          debug_req_i_cmp;
-  logic                          debug_havereset_o_cmp;
-  logic                          debug_running_o_cmp;
-  logic                          debug_halted_o_cmp;
-  logic                          debug_pc_valid_o_cmp;
-  logic [31:0]                   debug_pc_o_cmp;
+//   // Debug interface
+//   logic                          debug_req_i_cmp;
+//   logic                          debug_havereset_o_cmp;
+//   logic                          debug_running_o_cmp;
+//   logic                          debug_halted_o_cmp;
+//   logic                          debug_pc_valid_o_cmp;
+//   logic [31:0]                   debug_pc_o_cmp;
 
-  // CPU control signals
-  logic                          fetch_enable_i_cmp;
-  logic                          core_sleep_o_cmp;
+//   // CPU control signals
+//   logic                          fetch_enable_i_cmp;
+//   logic                          core_sleep_o_cmp;
 
-  // Comparison outputs 
-  if_id_pipe_t                   if_id_compare_o_cmp;
-  id_ex_pipe_t                   id_ex_compare_o_cmp;
-  ex_wb_pipe_t                   ex_wb_compare_o_cmp;
+//   // Comparison outputs 
+//   if_id_pipe_t                   if_id_compare_o_cmp;
+//   id_ex_pipe_t                   id_ex_compare_o_cmp;
+//   ex_wb_pipe_t                   ex_wb_compare_o_cmp;
 
-  // Register for output form main core
-  logic         instr_req_o_reg;         
-  logic [31:0]  instr_addr_o_reg;        
-  logic [1:0]   instr_memtype_o_reg;     
-  logic [2:0]   instr_prot_o_reg;        
-  logic         instr_dbg_o_reg;         
-  logic         instr_reqpar_o_reg;      
-  logic [12:0]  instr_achk_o_reg;        
+//   // Register for output form main core
+//   logic         instr_req_o_reg;         
+//   logic [31:0]  instr_addr_o_reg;        
+//   logic [1:0]   instr_memtype_o_reg;     
+//   logic [2:0]   instr_prot_o_reg;        
+//   logic         instr_dbg_o_reg;         
+//   logic         instr_reqpar_o_reg;      
+//   logic [12:0]  instr_achk_o_reg;        
 
-  logic         data_req_o_reg;          
-  logic [31:0]  data_addr_o_reg;         
-  logic [3:0]   data_be_o_reg;           
-  logic         data_we_o_reg;           
-  logic [31:0]  data_wdata_o_reg;        
-  logic [1:0]   data_memtype_o_reg;      
-  logic [2:0]   data_prot_o_reg;           
-  logic         data_dbg_o_reg;          
-  logic         data_reqpar_o_reg;       
-  logic [12:0]  data_achk_o_reg;       
+//   logic         data_req_o_reg;          
+//   logic [31:0]  data_addr_o_reg;         
+//   logic [3:0]   data_be_o_reg;           
+//   logic         data_we_o_reg;           
+//   logic [31:0]  data_wdata_o_reg;        
+//   logic [1:0]   data_memtype_o_reg;      
+//   logic [2:0]   data_prot_o_reg;           
+//   logic         data_dbg_o_reg;          
+//   logic         data_reqpar_o_reg;       
+//   logic [12:0]  data_achk_o_reg;       
 
-  logic [63:0]  mcycle_o_reg;  
+//   logic [63:0]  mcycle_o_reg;  
 
-  logic         fencei_flush_req_o_reg;  
+//   logic         fencei_flush_req_o_reg;  
 
-  logic         alert_minor_o_reg;       
-  logic         alert_major_o_reg;
+//   logic         alert_minor_o_reg;       
+//   logic         alert_major_o_reg;
 
-  logic         debug_havereset_o_reg;   
-  logic         debug_running_o_reg;     
-  logic         debug_halted_o_reg;      
-  logic         debug_pc_valid_o_reg;    
-  logic [31:0]  debug_pc_o_reg;       
+//   logic         debug_havereset_o_reg;   
+//   logic         debug_running_o_reg;     
+//   logic         debug_halted_o_reg;      
+//   logic         debug_pc_valid_o_reg;    
+//   logic [31:0]  debug_pc_o_reg;       
 
-  logic [31:0]  core_sleep_o_reg;   
+//   logic [31:0]  core_sleep_o_reg;   
 
-  if_id_pipe_t  if_id_compare_o_reg;     
-  id_ex_pipe_t  id_ex_compare_o_reg;    
-  ex_wb_pipe_t  ex_wb_compare_o_reg;     
+//   if_id_pipe_t  if_id_compare_o_reg;     
+//   id_ex_pipe_t  id_ex_compare_o_reg;    
+//   ex_wb_pipe_t  ex_wb_compare_o_reg;     
 
-always_ff @(posedge clk_i or negedge rst_ni) begin
-  if (!rst_ni) begin 
-    // Registers for holding input data going to comparison core
-    boot_addr_i_cmp         <= 0;
-    dm_exception_addr_i_cmp <= 0;
-    dm_halt_addr_i_cmp      <= 0;
-    mhartid_i_cmp           <= 0;
-    mimpid_patch_i_cmp      <= 0;
-    mtvec_addr_i_cmp        <= 0;
-    instr_gnt_i_cmp         <= 0;
-    instr_rvalid_i_cmp      <= 0;
-    instr_rdata_i_cmp       <= 0;
-    instr_err_i_cmp         <= 0;
-    instr_gntpar_i_cmp      <= 0;         // secure
-    instr_rvalidpar_i_cmp   <= 0;      // secure
-    instr_rchk_i_cmp        <= 0;           // secure
-    data_gnt_i_cmp          <= 0;
-    data_rvalid_i_cmp       <= 0;
-    data_rdata_i_cmp        <= 0;
-    data_err_i_cmp          <= 0;
-    data_gntpar_i_cmp       <= 0;          // secure
-    data_rvalidpar_i_cmp    <= 0;       // secure
-    data_rchk_i_cmp         <= 0;            // secure
-    irq_i_cmp               <= 0;
-    wu_wfe_i_cmp            <= 0;   // Wait-for-event wakeup
-    clic_irq_i_cmp          <= 0;
-    clic_irq_id_i_cmp       <= 0;
-    clic_irq_level_i_cmp    <= 0; 
-    clic_irq_priv_i_cmp     <= 0;
-    clic_irq_shv_i_cmp      <= 0;
-    fencei_flush_ack_i_cmp  <= 0;
-    debug_req_i_cmp         <= 0;
-    fetch_enable_i_cmp      <= 0;
+// always_ff @(posedge clk_i or negedge rst_ni) begin
+//   if (!rst_ni) begin 
+//     // Registers for holding input data going to comparison core
+//     boot_addr_i_cmp         <= 0;
+//     dm_exception_addr_i_cmp <= 0;
+//     dm_halt_addr_i_cmp      <= 0;
+//     mhartid_i_cmp           <= 0;
+//     mimpid_patch_i_cmp      <= 0;
+//     mtvec_addr_i_cmp        <= 0;
+//     instr_gnt_i_cmp         <= 0;
+//     instr_rvalid_i_cmp      <= 0;
+//     instr_rdata_i_cmp       <= 0;
+//     instr_err_i_cmp         <= 0;
+//     instr_gntpar_i_cmp      <= 0;         // secure
+//     instr_rvalidpar_i_cmp   <= 0;      // secure
+//     instr_rchk_i_cmp        <= 0;           // secure
+//     data_gnt_i_cmp          <= 0;
+//     data_rvalid_i_cmp       <= 0;
+//     data_rdata_i_cmp        <= 0;
+//     data_err_i_cmp          <= 0;
+//     data_gntpar_i_cmp       <= 0;          // secure
+//     data_rvalidpar_i_cmp    <= 0;       // secure
+//     data_rchk_i_cmp         <= 0;            // secure
+//     irq_i_cmp               <= 0;
+//     wu_wfe_i_cmp            <= 0;   // Wait-for-event wakeup
+//     clic_irq_i_cmp          <= 0;
+//     clic_irq_id_i_cmp       <= 0;
+//     clic_irq_level_i_cmp    <= 0; 
+//     clic_irq_priv_i_cmp     <= 0;
+//     clic_irq_shv_i_cmp      <= 0;
+//     fencei_flush_ack_i_cmp  <= 0;
+//     debug_req_i_cmp         <= 0;
+//     fetch_enable_i_cmp      <= 0;
 
-    // Registers for holding output data from main core 
-    instr_req_o_reg         <= 0;
-    instr_addr_o_reg        <= 0;
-    instr_memtype_o_reg     <= 0;
-    instr_prot_o_reg        <= 0;
-    instr_dbg_o_reg         <= 0;
-    instr_reqpar_o_reg      <= 0;
-    instr_achk_o_reg        <= 0;
-    data_req_o_reg          <= 0;  
-    data_addr_o_reg         <= 0;
-    data_be_o_reg           <= 0;
-    data_we_o_reg           <= 0;
-    data_wdata_o_reg        <= 0;
-    data_memtype_o_reg      <= 0;
-    data_prot_o_reg         <= 0;
-    data_dbg_o_reg          <= 0;
-    data_reqpar_o_reg       <= 0;
-    data_achk_o_reg         <= 0;
-    mcycle_o_reg            <= 0;
-    fencei_flush_req_o_reg  <= 0;
-    alert_minor_o_reg       <= 0;
-    alert_major_o_reg       <= 0;
-    debug_havereset_o_reg   <= 0;
-    debug_running_o_reg     <= 0;
-    debug_halted_o_reg      <= 0;
-    debug_pc_valid_o_reg    <= 0;
-    debug_pc_o_reg          <= 0;
-    core_sleep_o_reg        <= 0;
-    if_id_compare_o_reg     <= 0;
-    id_ex_compare_o_reg     <= 0;
-    ex_wb_compare_o_reg     <= 0;
-  end
-  else begin
-    // Registers for holding input data going to comparison core
-    boot_addr_i_cmp         <= boot_addr_i;
-    dm_exception_addr_i_cmp <= dm_exception_addr_i;
-    dm_halt_addr_i_cmp      <= dm_halt_addr_i;
-    mhartid_i_cmp           <= mhartid_i;
-    mimpid_patch_i_cmp      <= mimpid_patch_i;
-    mtvec_addr_i_cmp        <= mtvec_addr_i;
-    instr_gnt_i_cmp         <= instr_gnt_i;
-    instr_rvalid_i_cmp      <= instr_rvalid_i;
-    instr_rdata_i_cmp       <= instr_rdata_i;
-    instr_err_i_cmp         <= instr_err_i;
-    instr_gntpar_i_cmp      <= instr_gntpar_i;         // secure
-    instr_rvalidpar_i_cmp   <= instr_rvalidpar_i;      // secure
-    instr_rchk_i_cmp        <= instr_rchk_i;           // secure
-    data_gnt_i_cmp          <= data_gnt_i;
-    data_rvalid_i_cmp       <= data_rvalid_i;
-    data_rdata_i_cmp        <= data_rdata_i;
-    data_err_i_cmp          <= data_err_i;
-    data_gntpar_i_cmp       <= data_gntpar_i;          // secure
-    data_rvalidpar_i_cmp    <= data_rvalidpar_i;       // secure
-    data_rchk_i_cmp         <= data_rchk_i;            // secure
-    irq_i_cmp               <= irq_i;
-    wu_wfe_i_cmp            <= wu_wfe_i;   // Wait-for-event wakeup
-    clic_irq_i_cmp          <= clic_irq_i;
-    clic_irq_id_i_cmp       <= clic_irq_id_i;
-    clic_irq_level_i_cmp    <= clic_irq_level_i;
-    clic_irq_priv_i_cmp     <= clic_irq_priv_i;
-    clic_irq_shv_i_cmp      <= clic_irq_shv_i;
-    fencei_flush_ack_i_cmp  <= fencei_flush_ack_i;
-    debug_req_i_cmp         <= debug_req_i;
-    fetch_enable_i_cmp      <= fetch_enable_i;
+//     // Registers for holding output data from main core 
+//     instr_req_o_reg         <= 0;
+//     instr_addr_o_reg        <= 0;
+//     instr_memtype_o_reg     <= 0;
+//     instr_prot_o_reg        <= 0;
+//     instr_dbg_o_reg         <= 0;
+//     instr_reqpar_o_reg      <= 0;
+//     instr_achk_o_reg        <= 0;
+//     data_req_o_reg          <= 0;  
+//     data_addr_o_reg         <= 0;
+//     data_be_o_reg           <= 0;
+//     data_we_o_reg           <= 0;
+//     data_wdata_o_reg        <= 0;
+//     data_memtype_o_reg      <= 0;
+//     data_prot_o_reg         <= 0;
+//     data_dbg_o_reg          <= 0;
+//     data_reqpar_o_reg       <= 0;
+//     data_achk_o_reg         <= 0;
+//     mcycle_o_reg            <= 0;
+//     fencei_flush_req_o_reg  <= 0;
+//     alert_minor_o_reg       <= 0;
+//     alert_major_o_reg       <= 0;
+//     debug_havereset_o_reg   <= 0;
+//     debug_running_o_reg     <= 0;
+//     debug_halted_o_reg      <= 0;
+//     debug_pc_valid_o_reg    <= 0;
+//     debug_pc_o_reg          <= 0;
+//     core_sleep_o_reg        <= 0;
+//     if_id_compare_o_reg     <= 0;
+//     id_ex_compare_o_reg     <= 0;
+//     ex_wb_compare_o_reg     <= 0;
+//   end
+//   else begin
+//     // Registers for holding input data going to comparison core
+//     boot_addr_i_cmp         <= boot_addr_i;
+//     dm_exception_addr_i_cmp <= dm_exception_addr_i;
+//     dm_halt_addr_i_cmp      <= dm_halt_addr_i;
+//     mhartid_i_cmp           <= mhartid_i;
+//     mimpid_patch_i_cmp      <= mimpid_patch_i;
+//     mtvec_addr_i_cmp        <= mtvec_addr_i;
+//     instr_gnt_i_cmp         <= instr_gnt_i;
+//     instr_rvalid_i_cmp      <= instr_rvalid_i;
+//     instr_rdata_i_cmp       <= instr_rdata_i;
+//     instr_err_i_cmp         <= instr_err_i;
+//     instr_gntpar_i_cmp      <= instr_gntpar_i;         // secure
+//     instr_rvalidpar_i_cmp   <= instr_rvalidpar_i;      // secure
+//     instr_rchk_i_cmp        <= instr_rchk_i;           // secure
+//     data_gnt_i_cmp          <= data_gnt_i;
+//     data_rvalid_i_cmp       <= data_rvalid_i;
+//     data_rdata_i_cmp        <= data_rdata_i;
+//     data_err_i_cmp          <= data_err_i;
+//     data_gntpar_i_cmp       <= data_gntpar_i;          // secure
+//     data_rvalidpar_i_cmp    <= data_rvalidpar_i;       // secure
+//     data_rchk_i_cmp         <= data_rchk_i;            // secure
+//     irq_i_cmp               <= irq_i;
+//     wu_wfe_i_cmp            <= wu_wfe_i;   // Wait-for-event wakeup
+//     clic_irq_i_cmp          <= clic_irq_i;
+//     clic_irq_id_i_cmp       <= clic_irq_id_i;
+//     clic_irq_level_i_cmp    <= clic_irq_level_i;
+//     clic_irq_priv_i_cmp     <= clic_irq_priv_i;
+//     clic_irq_shv_i_cmp      <= clic_irq_shv_i;
+//     fencei_flush_ack_i_cmp  <= fencei_flush_ack_i;
+//     debug_req_i_cmp         <= debug_req_i;
+//     fetch_enable_i_cmp      <= fetch_enable_i;
  
-    // Registers for holding output data from main core 
-    instr_req_o_reg         <= instr_req_o;
-    instr_addr_o_reg        <= instr_addr_o;
-    instr_memtype_o_reg     <= instr_memtype_o;
-    instr_prot_o_reg        <= instr_prot_o;
-    instr_dbg_o_reg         <= instr_dbg_o;
-    instr_reqpar_o_reg      <= instr_reqpar_o;
-    instr_achk_o_reg        <= instr_achk_o;
-    data_req_o_reg          <= data_req_o;
-    data_addr_o_reg         <= data_addr_o;
-    data_be_o_reg           <= data_be_o;
-    data_we_o_reg           <= data_we_o;
-    data_wdata_o_reg        <= data_wdata_o;
-    data_memtype_o_reg      <= data_memtype_o;
-    data_prot_o_reg         <= data_prot_o;
-    data_dbg_o_reg          <= data_dbg_o;
-    data_reqpar_o_reg       <= data_reqpar_o;
-    data_achk_o_reg         <= data_achk_o;
-    mcycle_o_reg            <= mcycle_o;
-    fencei_flush_req_o_reg  <= fencei_flush_req_o;
-    alert_minor_o_reg       <= alert_minor_o;
-    alert_major_o_reg       <= alert_major_o;
-    debug_havereset_o_reg   <= debug_havereset_o;
-    debug_running_o_reg     <= debug_running_o;
-    debug_halted_o_reg      <= debug_halted_o;
-    debug_pc_valid_o_reg    <= debug_pc_valid_o;
-    debug_pc_o_reg          <= debug_pc_o;
-    core_sleep_o_reg        <= core_sleep_o;
-    if_id_compare_o_reg     <= if_id_compare_o;
-    id_ex_compare_o_reg     <= id_ex_compare_o;
-    ex_wb_compare_o_reg     <= ex_wb_compare_o;
-  end 
-end
+//     // Registers for holding output data from main core 
+//     instr_req_o_reg         <= instr_req_o;
+//     instr_addr_o_reg        <= instr_addr_o;
+//     instr_memtype_o_reg     <= instr_memtype_o;
+//     instr_prot_o_reg        <= instr_prot_o;
+//     instr_dbg_o_reg         <= instr_dbg_o;
+//     instr_reqpar_o_reg      <= instr_reqpar_o;
+//     instr_achk_o_reg        <= instr_achk_o;
+//     data_req_o_reg          <= data_req_o;
+//     data_addr_o_reg         <= data_addr_o;
+//     data_be_o_reg           <= data_be_o;
+//     data_we_o_reg           <= data_we_o;
+//     data_wdata_o_reg        <= data_wdata_o;
+//     data_memtype_o_reg      <= data_memtype_o;
+//     data_prot_o_reg         <= data_prot_o;
+//     data_dbg_o_reg          <= data_dbg_o;
+//     data_reqpar_o_reg       <= data_reqpar_o;
+//     data_achk_o_reg         <= data_achk_o;
+//     mcycle_o_reg            <= mcycle_o;
+//     fencei_flush_req_o_reg  <= fencei_flush_req_o;
+//     alert_minor_o_reg       <= alert_minor_o;
+//     alert_major_o_reg       <= alert_major_o;
+//     debug_havereset_o_reg   <= debug_havereset_o;
+//     debug_running_o_reg     <= debug_running_o;
+//     debug_halted_o_reg      <= debug_halted_o;
+//     debug_pc_valid_o_reg    <= debug_pc_valid_o;
+//     debug_pc_o_reg          <= debug_pc_o;
+//     core_sleep_o_reg        <= core_sleep_o;
+//     if_id_compare_o_reg     <= if_id_compare_o;
+//     id_ex_compare_o_reg     <= id_ex_compare_o;
+//     ex_wb_compare_o_reg     <= ex_wb_compare_o;
+//   end 
+// end
 
 // always_comb begin
 //     alert_compare_o[0] = 
@@ -1566,115 +1566,115 @@ end
 //     alert_compare_o[3] = (ex_wb_compare_o_reg != ex_wb_compare_o_cmp);
 // end
 
-cv32e40s_core
-        #(
-          .LIB                   ( LIB                   ),
-          .RV32                  ( RV32                  ),
-          .B_EXT                 ( B_EXT                 ),
-          .M_EXT                 ( M_EXT                 ),
-          .PMP_GRANULARITY       ( PMP_GRANULARITY       ),
-          .PMP_NUM_REGIONS       ( PMP_NUM_REGIONS       ),
-          .PMP_PMPNCFG_RV        ( PMP_PMPNCFG_RV        ),
-          .PMP_PMPADDR_RV        ( PMP_PMPADDR_RV        ),
-          .PMP_MSECCFG_RV        ( PMP_MSECCFG_RV        ),
-          .CLIC                  ( CLIC                  ),
-          .CLIC_ID_WIDTH         ( CLIC_ID_WIDTH         ),
-          .DEBUG                 ( DEBUG                 ),
-          .DM_REGION_START       ( DM_REGION_START       ),
-          .DM_REGION_END         ( DM_REGION_END         ),
-          .DBG_NUM_TRIGGERS      ( DBG_NUM_TRIGGERS      ),
-          .PMA_NUM_REGIONS       ( PMA_NUM_REGIONS       ),
-          .PMA_CFG               ( PMA_CFG               ),
-          .LFSR0_CFG             ( LFSR0_CFG             ),
-          .LFSR1_CFG             ( LFSR1_CFG             ),
-          .LFSR2_CFG             ( LFSR2_CFG             ))
-    core_cmp_i (
-    .clk_i(clk_i),
-    .rst_ni(rst_ni),
-    .scan_cg_en_i(scan_cg_en_i),
+// cv32e40s_core
+//         #(
+//           .LIB                   ( LIB                   ),
+//           .RV32                  ( RV32                  ),
+//           .B_EXT                 ( B_EXT                 ),
+//           .M_EXT                 ( M_EXT                 ),
+//           .PMP_GRANULARITY       ( PMP_GRANULARITY       ),
+//           .PMP_NUM_REGIONS       ( PMP_NUM_REGIONS       ),
+//           .PMP_PMPNCFG_RV        ( PMP_PMPNCFG_RV        ),
+//           .PMP_PMPADDR_RV        ( PMP_PMPADDR_RV        ),
+//           .PMP_MSECCFG_RV        ( PMP_MSECCFG_RV        ),
+//           .CLIC                  ( CLIC                  ),
+//           .CLIC_ID_WIDTH         ( CLIC_ID_WIDTH         ),
+//           .DEBUG                 ( DEBUG                 ),
+//           .DM_REGION_START       ( DM_REGION_START       ),
+//           .DM_REGION_END         ( DM_REGION_END         ),
+//           .DBG_NUM_TRIGGERS      ( DBG_NUM_TRIGGERS      ),
+//           .PMA_NUM_REGIONS       ( PMA_NUM_REGIONS       ),
+//           .PMA_CFG               ( PMA_CFG               ),
+//           .LFSR0_CFG             ( LFSR0_CFG             ),
+//           .LFSR1_CFG             ( LFSR1_CFG             ),
+//           .LFSR2_CFG             ( LFSR2_CFG             ))
+//     core_cmp_i (
+//     .clk_i(clk_i),
+//     .rst_ni(rst_ni),
+//     .scan_cg_en_i(scan_cg_en_i),
 
-    // Static configuration
-    .boot_addr_i(boot_addr_i_cmp),
-    .dm_exception_addr_i(dm_exception_addr_i_cmp),
-    .dm_halt_addr_i(dm_halt_addr_i_cmp),
-    .mhartid_i(mhartid_i_cmp),
-    .mimpid_patch_i(mimpid_patch_i_cmp),
-    .mtvec_addr_i(mtvec_addr_i_cmp),
+//     // Static configuration
+//     .boot_addr_i(boot_addr_i_cmp),
+//     .dm_exception_addr_i(dm_exception_addr_i_cmp),
+//     .dm_halt_addr_i(dm_halt_addr_i_cmp),
+//     .mhartid_i(mhartid_i_cmp),
+//     .mimpid_patch_i(mimpid_patch_i_cmp),
+//     .mtvec_addr_i(mtvec_addr_i_cmp),
 
-    // Instruction memory interface
-    .instr_req_o(instr_req_o_cmp),
-    .instr_gnt_i(instr_gnt_i_cmp),
-    .instr_rvalid_i(instr_rvalid_i_cmp),
-    .instr_addr_o(instr_addr_o_cmp),
-    .instr_memtype_o(instr_memtype_o_cmp),
-    .instr_prot_o(instr_prot_o_cmp),
-    .instr_dbg_o(instr_dbg_o_cmp),
-    .instr_rdata_i(instr_rdata_i_cmp),
-    .instr_err_i(instr_err_i_cmp),
-    .instr_reqpar_o(instr_reqpar_o_cmp),         // secure
-    .instr_gntpar_i(instr_gntpar_i_cmp),         // secure
-    .instr_rvalidpar_i(instr_rvalidpar_i_cmp),      // secure
-    .instr_achk_o(instr_achk_o_cmp),           // secure
-    .instr_rchk_i(instr_rchk_i_cmp),           // secure
+//     // Instruction memory interface
+//     .instr_req_o(instr_req_o_cmp),
+//     .instr_gnt_i(instr_gnt_i_cmp),
+//     .instr_rvalid_i(instr_rvalid_i_cmp),
+//     .instr_addr_o(instr_addr_o_cmp),
+//     .instr_memtype_o(instr_memtype_o_cmp),
+//     .instr_prot_o(instr_prot_o_cmp),
+//     .instr_dbg_o(instr_dbg_o_cmp),
+//     .instr_rdata_i(instr_rdata_i_cmp),
+//     .instr_err_i(instr_err_i_cmp),
+//     .instr_reqpar_o(instr_reqpar_o_cmp),         // secure
+//     .instr_gntpar_i(instr_gntpar_i_cmp),         // secure
+//     .instr_rvalidpar_i(instr_rvalidpar_i_cmp),      // secure
+//     .instr_achk_o(instr_achk_o_cmp),           // secure
+//     .instr_rchk_i(instr_rchk_i_cmp),           // secure
 
-    // Data memory interface
-    .data_req_o(data_req_o_cmp),
-    .data_gnt_i(data_gnt_i_cmp),
-    .data_rvalid_i(data_rvalid_i_cmp),
-    .data_addr_o(data_addr_o_cmp),
-    .data_be_o(data_be_o_cmp),
-    .data_we_o(data_we_o_cmp),
-    .data_wdata_o(data_wdata_o_cmp),
-    .data_memtype_o(data_memtype_o_cmp),
-    .data_prot_o(data_prot_o_cmp),
-    .data_dbg_o(data_dbg_o_cmp),
-    .data_rdata_i(data_rdata_i_cmp),
-    .data_err_i(data_err_i_cmp),
-    .data_reqpar_o(data_reqpar_o_cmp),          // secure
-    .data_gntpar_i(data_gntpar_i_cmp),          // secure
-    .data_rvalidpar_i(data_rvalidpar_i_cmp),       // secure
-    .data_achk_o(data_achk_o_cmp),            // secure
-    .data_rchk_i(data_rchk_i_cmp),            // secure
+//     // Data memory interface
+//     .data_req_o(data_req_o_cmp),
+//     .data_gnt_i(data_gnt_i_cmp),
+//     .data_rvalid_i(data_rvalid_i_cmp),
+//     .data_addr_o(data_addr_o_cmp),
+//     .data_be_o(data_be_o_cmp),
+//     .data_we_o(data_we_o_cmp),
+//     .data_wdata_o(data_wdata_o_cmp),
+//     .data_memtype_o(data_memtype_o_cmp),
+//     .data_prot_o(data_prot_o_cmp),
+//     .data_dbg_o(data_dbg_o_cmp),
+//     .data_rdata_i(data_rdata_i_cmp),
+//     .data_err_i(data_err_i_cmp),
+//     .data_reqpar_o(data_reqpar_o_cmp),          // secure
+//     .data_gntpar_i(data_gntpar_i_cmp),          // secure
+//     .data_rvalidpar_i(data_rvalidpar_i_cmp),       // secure
+//     .data_achk_o(data_achk_o_cmp),            // secure
+//     .data_rchk_i(data_rchk_i_cmp),            // secure
 
-    // Cycle count
-    .mcycle_o(mcycle_o_cmp),
+//     // Cycle count
+//     .mcycle_o(mcycle_o_cmp),
 
-    // Basic interrupt architecture
-    .irq_i(irq_i_cmp),
+//     // Basic interrupt architecture
+//     .irq_i(irq_i_cmp),
 
-    // Event wakeup signals
-    .wu_wfe_i(wu_wfe_i_cmp),   // Wait-for-event wakeup
+//     // Event wakeup signals
+//     .wu_wfe_i(wu_wfe_i_cmp),   // Wait-for-event wakeup
 
-    // CLIC interrupt architecture
-    .clic_irq_i(clic_irq_i_cmp),
-    .clic_irq_id_i(clic_irq_id_i_cmp),
-    .clic_irq_level_i(clic_irq_level_i_cmp),
-    .clic_irq_priv_i(clic_irq_priv_i_cmp),
-    .clic_irq_shv_i(clic_irq_shv_i_cmp),
+//     // CLIC interrupt architecture
+//     .clic_irq_i(clic_irq_i_cmp),
+//     .clic_irq_id_i(clic_irq_id_i_cmp),
+//     .clic_irq_level_i(clic_irq_level_i_cmp),
+//     .clic_irq_priv_i(clic_irq_priv_i_cmp),
+//     .clic_irq_shv_i(clic_irq_shv_i_cmp),
 
-    // Fence.i flush handshake
-    .fencei_flush_req_o(fencei_flush_req_o_cmp),
-    .fencei_flush_ack_i(fencei_flush_ack_i_cmp),
+//     // Fence.i flush handshake
+//     .fencei_flush_req_o(fencei_flush_req_o_cmp),
+//     .fencei_flush_ack_i(fencei_flush_ack_i_cmp),
 
-    // Security Alerts
-    .alert_minor_o(alert_minor_o_cmp),          // secure
-    .alert_major_o(alert_major_o_cmp),          // secure
+//     // Security Alerts
+//     .alert_minor_o(alert_minor_o_cmp),          // secure
+//     .alert_major_o(alert_major_o_cmp),          // secure
 
-    // Debug interface
-    .debug_req_i(debug_req_i_cmp),
-    .debug_havereset_o(debug_havereset_o_cmp),
-    .debug_running_o(debug_running_o_cmp),
-    .debug_halted_o(debug_halted_o_cmp),
-    .debug_pc_valid_o(debug_pc_valid_o_cmp),
-    .debug_pc_o(debug_pc_o_cmp),
+//     // Debug interface
+//     .debug_req_i(debug_req_i_cmp),
+//     .debug_havereset_o(debug_havereset_o_cmp),
+//     .debug_running_o(debug_running_o_cmp),
+//     .debug_halted_o(debug_halted_o_cmp),
+//     .debug_pc_valid_o(debug_pc_valid_o_cmp),
+//     .debug_pc_o(debug_pc_o_cmp),
 
-    // CPU control signals
-    .fetch_enable_i(fetch_enable_i_cmp),
-    .core_sleep_o(core_sleep_o_cmp),
+//     // CPU control signals
+//     .fetch_enable_i(fetch_enable_i_cmp),
+//     .core_sleep_o(core_sleep_o_cmp),
 
-    // Comparison outputs
-    .if_id_compare_o(if_id_compare_o_cmp),
-    .id_ex_compare_o(id_ex_compare_o_cmp),
-    .ex_wb_compare_o(ex_wb_compare_o_cmp)
-  );
+//     // Comparison outputs
+//     .if_id_compare_o(if_id_compare_o_cmp),
+//     .id_ex_compare_o(id_ex_compare_o_cmp),
+//     .ex_wb_compare_o(ex_wb_compare_o_cmp)
+//   );
 endmodule
