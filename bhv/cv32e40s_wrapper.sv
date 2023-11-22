@@ -397,7 +397,7 @@ module cv32e40s_wrapper
                         .*);
 
   bind cv32e40s_core:
-    core_i cv32e40s_core_sva
+    dual_core_i.core_i cv32e40s_core_sva
       #(.DEBUG (DEBUG),
         .PMA_NUM_REGIONS(PMA_NUM_REGIONS),
         .CLIC(CLIC),
