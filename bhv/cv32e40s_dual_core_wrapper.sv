@@ -1485,36 +1485,39 @@ always_ff @(posedge clk_i or negedge rst_ni) begin
 end
 
 always_comb begin
-    alert_compare_o[0] = (instr_req_o_reg != instr_req_o_cmp) or (instr_addr_o_reg != instr_addr_o_cmp) or
-    (instr_memtype_o_reg != instr_memtype_o_cmp) or
-    (instr_prot_o_reg != instr_prot_o_cmp) or
-    (instr_dbg_o_reg != instr_dbg_o_cmp) or
-    (instr_reqpar_o_reg != instr_reqpar_o_cmp) or
-    (instr_achk_o_reg != instr_achk_o_cmp) or
+    alert_compare_o[0] = 
+    // Instruction memory interface
+    (instr_req_o_reg != instr_req_o_cmp) |
+    (instr_addr_o_reg != instr_addr_o_cmp) |
+    (instr_memtype_o_reg != instr_memtype_o_cmp) |
+    (instr_prot_o_reg != instr_prot_o_cmp) |
+    (instr_dbg_o_reg != instr_dbg_o_cmp) |
+    (instr_reqpar_o_reg != instr_reqpar_o_cmp) |
+    (instr_achk_o_reg != instr_achk_o_cmp) |
     // Data memory interface
-    (data_req_o_reg != data_req_o_cmp) or
-    (data_addr_o_reg != data_addr_o_cmp) or
-    (data_be_o_reg != data_be_o_cmp) or
-    (data_we_o_reg != data_we_o_cmp) or
-    (data_wdata_o_reg != data_wdata_o_cmp) or
-    (data_memtype_o_reg != data_memtype_o_cmp) or
-    (data_prot_o_reg != data_prot_o_cmp) or
-    (data_dbg_o_reg != data_dbg_o_cmp) or
-    (data_reqpar_o_reg != data_reqpar_o_cmp) or
-    (data_achk_o_reg != data_achk_o_cmp) or
+    (data_req_o_reg != data_req_o_cmp) |
+    (data_addr_o_reg != data_addr_o_cmp) |
+    (data_be_o_reg != data_be_o_cmp) |
+    (data_we_o_reg != data_we_o_cmp) |
+    (data_wdata_o_reg != data_wdata_o_cmp) |
+    (data_memtype_o_reg != data_memtype_o_cmp) |
+    (data_prot_o_reg != data_prot_o_cmp) |
+    (data_dbg_o_reg != data_dbg_o_cmp) |
+    (data_reqpar_o_reg != data_reqpar_o_cmp) |
+    (data_achk_o_reg != data_achk_o_cmp) |
     // Cycle count
-    (mcycle_o_reg != mcycle_o_cmp) or
+    (mcycle_o_reg != mcycle_o_cmp) |
     // Fence.i flush handshake
-    (fencei_flush_req_o_reg != fencei_flush_req_o_cmp) or
+    (fencei_flush_req_o_reg != fencei_flush_req_o_cmp) |
     // Security Alerts
-    (alert_minor_o_reg != alert_minor_o_cmp) or
-    (alert_major_o_reg != alert_major_o_cmp) or
+    (alert_minor_o_reg != alert_minor_o_cmp) |
+    (alert_major_o_reg != alert_major_o_cmp) |
     // Debug interface
-    (debug_havereset_o_reg != debug_havereset_o_cmp) or
-    (debug_running_o_reg != debug_running_o_cmp) or
-    (debug_halted_o_reg != debug_halted_o_cmp) or
-    (debug_pc_valid_o_reg != debug_pc_valid_o_cmp) or
-    (debug_pc_o_reg != debug_pc_o_cmp) or
+    (debug_havereset_o_reg != debug_havereset_o_cmp) |
+    (debug_running_o_reg != debug_running_o_cmp) |
+    (debug_halted_o_reg != debug_halted_o_cmp) |
+    (debug_pc_valid_o_reg != debug_pc_valid_o_cmp) |
+    (debug_pc_o_reg != debug_pc_o_cmp) |
     // CPU control signals
     (core_sleep_o_reg != core_sleep_o_cmp);
     // Comparison outputs
