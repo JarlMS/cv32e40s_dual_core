@@ -1485,10 +1485,7 @@ always_ff @(posedge clk_i or negedge rst_ni) begin
 end
 
 always_comb begin
-    alert_compare_o[0] = 
-    // Instruction memory interface
-    (instr_req_o_reg != instr_req_o_cmp) or
-    (instr_addr_o_reg != instr_addr_o_cmp) or
+    alert_compare_o[0] = (instr_req_o_reg != instr_req_o_cmp) or (instr_addr_o_reg != instr_addr_o_cmp) or
     (instr_memtype_o_reg != instr_memtype_o_cmp) or
     (instr_prot_o_reg != instr_prot_o_cmp) or
     (instr_dbg_o_reg != instr_dbg_o_cmp) or
