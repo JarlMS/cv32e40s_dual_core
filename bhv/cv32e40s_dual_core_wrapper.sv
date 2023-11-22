@@ -126,7 +126,7 @@ module cv32e40s_dual_core import cv32e40s_pkg::*;
     // Security Alerts
   output logic                          alert_minor_o,          // secure
   output logic                          alert_major_o,          // secure
-  output logic                          alert_compare_o,
+  output logic [3:0]                    alert_compare_o,
 
   // Debug interface
   input  logic                          debug_req_i,
