@@ -396,7 +396,7 @@ module cv32e40s_wrapper
         prefetcher_sva ( .prefetch_is_clic_ptr (core_i.if_stage_i.prefetch_unit_i.prefetch_is_clic_ptr_o),
                         .*);
 
-  bind cv32e40s_core:
+  bind cv32e40s_dual_core:
     core_i cv32e40s_core_sva
       #(.DEBUG (DEBUG),
         .PMA_NUM_REGIONS(PMA_NUM_REGIONS),
