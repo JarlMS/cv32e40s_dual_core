@@ -181,7 +181,7 @@ module cv32e40s_wrapper
 
   // RTL Assertions
 
-  bind cv32e40s_core: core_i cv32e40s_parameter_sva
+  bind cv32e40s_dual_core: core_i cv32e40s_parameter_sva
     #(
       .PMA_NUM_REGIONS (PMA_NUM_REGIONS ),
       .PMA_CFG         (PMA_CFG         ),
