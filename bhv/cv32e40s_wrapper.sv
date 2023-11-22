@@ -937,7 +937,7 @@ endgenerate
     //       .LFSR2_CFG             ( LFSR2_CFG             ))
     // core_i.core_i (.*);
     // Instantiate the dual core wrapper 
-    cv32e40s_dual_core_wrapper
+    cv32e40s_dual_core
         #(
           .LIB                   ( LIB                   ),
           .RV32                  ( RV32                  ),
