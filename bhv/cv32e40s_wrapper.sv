@@ -955,7 +955,7 @@ endgenerate
       .enable           (glitch_enable),
       .enable_specific  (glitch_enable_specific),
       .clk              (clk_i),
-      .reset            (rst_ni),
+      .rst_n            (rst_ni),
       .out              (glitch_out),
       .in               (core_i.if_id_pipe.pc)
     );
