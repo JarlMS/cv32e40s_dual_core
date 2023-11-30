@@ -824,6 +824,9 @@ parameter ENABLE_DUAL_CORES = 1;
 // Enable PC-Hardening 
 parameter ENABLE_PC_HARDENING = 1;
 
+// Enable Glitching
+parameter ENABLE_GLITCHING = 1;
+
 // Enable Security Features
 parameter SECURE = 1;
 
