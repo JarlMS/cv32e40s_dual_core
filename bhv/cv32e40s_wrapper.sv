@@ -937,25 +937,22 @@ endgenerate
           .LFSR2_CFG             ( LFSR2_CFG             ))
     core_i (.*);
 
-    generate if (ENABLE_GLITCHING == 1) begin : glitch_gen
-      // Glitching signals 
-      wire glitch_enable;
-      wire glitch_enable_specific;
-      logic [($bits(core_i.if_id_pipe_i.pc)-1):0] glitch_out;
+    // Glitching signals 
+    wire glitch_enable;
+    wire glitch_enable_specific;
+    logic [($bits(core_i.if_id_pipe_i.pc)-1):0] glitch_out;
 
-      cv32e40s_glitch_injector 
-        #(
-          $bits(core_i.if_id_pipe_i.pc),
-          8'b10101010
-          )
-      glitch_injector_i (
-        .enable           (glitch_enable),
-        .enable_specific  (glitch_enable_specific),
-        .clk              (clk_i),
-        .reset            (rst_ni),
-        .out              (glitch_out),
-        .in               (core_i.if_id_pipe_i.pc)
+    cv32e40s_glitch_injector 
+      #(
+        $bits(core_i.if_id_pipe_i.pc),
+        8'b10101010
+        )
+    glitch_injector_i (
+      .enable           (glitch_enable),
+      .enable_specific  (glitch_enable_specific),
+      .clk              (clk_i),
+      .reset            (rst_ni),
+      .out              (glitch_out),
+      .in               (core_i.if_id_pipe_i.pc)
     );
-    end
-    endgenerate
 endmodule
