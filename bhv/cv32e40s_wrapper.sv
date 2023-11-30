@@ -938,11 +938,11 @@ endgenerate
     core_i (.*);
 
     // Glitching signals 
-    wire glitch_enable;
+    reg glitch_enable;
     wire glitch_enable_specific;
     logic [31:0] glitch_out;
 
-    initial begin 
+    always begin 
       glitch_enable = 1'b0;
     end
 
