@@ -953,7 +953,7 @@ endgenerate
         .enable_specific  (glitch_enable_specific),
         .clk              (clk_i),
         .reset            (rst_ni),
-        .out              (core_i.if_id_pipe_o.pc),
+        .out              (glitch_out),
         .in               (core_i.if_id_pipe_i.pc)
     );
     end
