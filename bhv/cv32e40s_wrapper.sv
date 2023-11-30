@@ -940,11 +940,11 @@ endgenerate
     // Glitching signals 
     wire glitch_enable;
     wire glitch_enable_specific;
-    logic [($bits(core_i.if_id_pipe_i.pc)-1):0] glitch_out;
+    logic [($bits(core_i.if_id_pipe.pc)-1):0] glitch_out;
 
     cv32e40s_glitch_injector 
       #(
-        $bits(core_i.if_id_pipe_i.pc),
+        $bits(core_i.if_id_pipe.pc),
         8'b10101010
         )
     glitch_injector_i (
@@ -953,6 +953,6 @@ endgenerate
       .clk              (clk_i),
       .reset            (rst_ni),
       .out              (glitch_out),
-      .in               (core_i.if_id_pipe_i.pc)
+      .in               (core_i.if_id_pipe.pc)
     );
 endmodule
