@@ -949,7 +949,7 @@ endgenerate
         )
     glitch_injector_i (
       .enable           (1'b1),
-      .enable_specific  (glitch_enable_specific),
+      .enable_specific  (1'b0),
       .clk              (clk_i),
       .rst_n            (rst_ni),
       .out              (glitch_out),
