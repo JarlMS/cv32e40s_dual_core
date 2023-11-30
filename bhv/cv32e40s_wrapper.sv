@@ -944,7 +944,7 @@ endgenerate
 
     cv32e40s_glitch_injector 
       #(
-        $bits(if_id_pipe_t.pc),
+        32,
         8'b10101010
         )
     glitch_injector_i (
