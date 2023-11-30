@@ -942,10 +942,6 @@ endgenerate
     wire glitch_enable_specific;
     logic [31:0] glitch_out;
 
-    always begin 
-      glitch_enable = 1'b0;
-    end
-
     cv32e40s_glitch_injector 
       #(
         32,
