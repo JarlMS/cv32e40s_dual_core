@@ -942,7 +942,7 @@ endgenerate
     wire glitch_enable_specific;
     logic [31:0] glitch_out;
 
-    always begin 
+    initial begin 
       glitch_enable = 1'b0;
     end
 
