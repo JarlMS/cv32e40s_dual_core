@@ -945,11 +945,11 @@ endgenerate
     cv32e40s_glitch_injector 
       #(
         32,
-        8'b10101010
+        32'h00006730
         )
     glitch_injector_i (
       .enable           (1'b1),
-      .enable_specific  (1'b0),
+      .enable_specific  (1'b1),
       .clk              (clk_i),
       .rst_n            (rst_ni),
       .out              (glitch_out),
