@@ -945,7 +945,7 @@ endgenerate
     cv32e40s_glitch_injector 
       #(
         32,
-        32'h00006730
+        32'h0000673c
         )
     glitch_injector_i (
       .enable           (1'b1),
